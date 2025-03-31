@@ -13,14 +13,28 @@ public class DatabaseTopologicalSort {
         // Initialize graph with empty lists and zero in-degree for all columns
         for (Table table : database.getTables()) {
             String tableName = table.getTableName();
+            List<String> tablePrimaryKeys = new ArrayList<>();
+            List<String> tableNonPrimaryKeys = new ArrayList<>();
+
             for (Column column : table.getColumns()) {
                 String node = tableName + "." + column.getColumnName();
                 graph.put(node, new ArrayList<>());
                 inDegree.put(node, 0);
+
+                if (table.getPrimaryKeys().contains(column.getColumnName())) {
+                    tablePrimaryKeys.add(node);
+                    primaryKeys.add(node);
+                } else {
+                    tableNonPrimaryKeys.add(node);
+                }
             }
-            // Store primary keys separately
-            for (String pk : table.getPrimaryKeys()) {
-                primaryKeys.add(tableName + "." + pk);
+
+            // Add edges from primary keys to non-primary keys within the table
+            for (String pk : tablePrimaryKeys) {
+                for (String nonPk : tableNonPrimaryKeys) {
+                    graph.get(pk).add(nonPk);
+                    inDegree.put(nonPk, inDegree.get(nonPk) + 1);
+                }
             }
         }
 
@@ -68,23 +82,25 @@ public class DatabaseTopologicalSort {
             throw new RuntimeException("Cycle detected! Topological sorting at column level is not possible.");
         }
 
+        return sortedOrder;
+
         // Step 5: Reorder to place primary keys first while maintaining relative order
-        List<String> finalOrder = new ArrayList<>();
-
-        // Add primary keys first, in their original sorted order
-        for (String column : sortedOrder) {
-            if (primaryKeys.contains(column)) {
-                finalOrder.add(column);
-            }
-        }
-
-        // Add remaining columns while preserving order
-        for (String column : sortedOrder) {
-            if (!primaryKeys.contains(column)) {
-                finalOrder.add(column);
-            }
-        }
-
-        return finalOrder;
+//        List<String> finalOrder = new ArrayList<>();
+//
+//        // Add primary keys first, in their original sorted order
+//        for (String column : sortedOrder) {
+//            if (primaryKeys.contains(column)) {
+//                finalOrder.add(column);
+//            }
+//        }
+//
+//        // Add remaining columns while preserving order
+//        for (String column : sortedOrder) {
+//            if (!primaryKeys.contains(column)) {
+//                finalOrder.add(column);
+//            }
+//        }
+//
+//        return finalOrder;
     }
 }
