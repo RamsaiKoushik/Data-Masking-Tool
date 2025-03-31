@@ -1,9 +1,11 @@
 package datamaskingtool.maskingStrategies;
 
-import java.util.List;
+import datamaskingtool.CustomClasses.CustomFloatList;
+import datamaskingtool.CustomClasses.CustomIntegerList;
+import datamaskingtool.CustomClasses.CustomStringList;
 
 public abstract class MaskingStrategy {
-    public abstract List<String> maskString(List<String> value);
-    public abstract List<Integer> maskInteger(List<Integer> value);
-    public abstract List<Float> maskFloat(List<Float> value);
+    public abstract CustomStringList mask(CustomStringList value);
+    public abstract CustomIntegerList mask(CustomIntegerList value);
+    public abstract CustomFloatList mask(CustomFloatList value);
 }
