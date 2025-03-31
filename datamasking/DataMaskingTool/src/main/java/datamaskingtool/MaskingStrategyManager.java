@@ -2,6 +2,7 @@ package datamaskingtool;
 
 import datamaskingtool.maskingStrategies.MaskingStrategy;
 import datamaskingtool.maskingStrategiesFactories.MaskingStrategyFactory;
+import datamaskingtool.maskingStrategiesFactories.RedactionStrategyFactory;
 import datamaskingtool.maskingStrategiesFactories.ShufflingStrategyFactory;
 
 public class MaskingStrategyManager{
@@ -12,7 +13,11 @@ public class MaskingStrategyManager{
        
         if ("Shuffle".equals(strategy)) {
             factory = new ShufflingStrategyFactory();
-        } else {
+        } 
+        else if("Redaction".equals(strategy)){
+            factory=new RedactionStrategyFactory();
+        }
+        else {
             throw new IllegalArgumentException("Unknown masking strategy: " + strategy);
         }
         

@@ -1,4 +1,4 @@
-package main.java.datamaskingtool.CustomClasses;
+package datamaskingtool.CustomClasses;
 
 import java.util.List;
 

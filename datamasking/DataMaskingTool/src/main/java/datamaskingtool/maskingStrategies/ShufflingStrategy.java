@@ -3,9 +3,9 @@ package datamaskingtool.maskingStrategies;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.datamaskingtool.CustomClasses.CustomFloatList;
-import main.java.datamaskingtool.CustomClasses.CustomIntegerList;
-import main.java.datamaskingtool.CustomClasses.CustomStringList;
+import datamaskingtool.CustomClasses.CustomFloatList;
+import datamaskingtool.CustomClasses.CustomIntegerList;
+import datamaskingtool.CustomClasses.CustomStringList;
 
 public class ShufflingStrategy extends MaskingStrategy{
     public CustomStringList mask(CustomStringList values){
