@@ -1,4 +1,5 @@
 package datamaskingtool;
+import datamaskingtool.DataClasses.XMLParser;
 
 /**
  * Hello world!
@@ -8,6 +9,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        XMLParser xmlparser = new XMLParser();
+        XMLParser.parse_xml("src/main/java/datamaskingtool/config/config.xml");
     }
 }
