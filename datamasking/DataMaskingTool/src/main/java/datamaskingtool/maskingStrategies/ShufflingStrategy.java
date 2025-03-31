@@ -3,36 +3,43 @@ package datamaskingtool.maskingStrategies;
 import java.util.Collections;
 import java.util.List;
 
+import main.java.datamaskingtool.CustomClasses.CustomFloatList;
+import main.java.datamaskingtool.CustomClasses.CustomIntegerList;
+import main.java.datamaskingtool.CustomClasses.CustomStringList;
+
 public class ShufflingStrategy extends MaskingStrategy{
-    public List<String> mask(List<String> values){
+    public CustomStringList mask(CustomStringList values){
 
         if (values == null || values.isEmpty()) {
             return values; // Return as-is if null or empty
         }
 
-        List<String> shuffledList = new java.util.ArrayList<>(List.copyOf(values)); // Create an immutable copy
+        CustomStringList shuffledList = new CustomStringList();
+        shuffledList.addAll(values);
+        Collections.shuffle(shuffledList);// Create an immutable copy
+
+        return shuffledList;
+    }
+
+    public CustomIntegerList mask(CustomIntegerList values){
+        if (values == null || values.isEmpty()) {
+            return values; // Return as-is if null or empty
+        }
+
+        CustomIntegerList shuffledList = new CustomIntegerList();
+        shuffledList.addAll(values);
         Collections.shuffle(shuffledList); // Shuffle the copy
 
         return shuffledList;
     }
 
-    public List<Integer> mask(List<Integer> values){
+    public CustomFloatList mask(CustomFloatList values){
         if (values == null || values.isEmpty()) {
             return values; // Return as-is if null or empty
         }
 
-        List<Integer> shuffledList = new java.util.ArrayList<>(List.copyOf(values)); // Create an immutable copy
-        Collections.shuffle(shuffledList); // Shuffle the copy
-
-        return shuffledList;
-    }
-
-    public List<Float> mask(List<Float> values){
-        if (values == null || values.isEmpty()) {
-            return values; // Return as-is if null or empty
-        }
-
-        List<Integer> shuffledList = new java.util.ArrayList<>(List.copyOf(values)); // Create an immutable copy
+        CustomFloatList shuffledList = new CustomFloatList();
+        shuffledList.addAll(values);
         Collections.shuffle(shuffledList); // Shuffle the copy
 
         return shuffledList;
