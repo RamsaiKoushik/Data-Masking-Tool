@@ -44,5 +44,4 @@ public class ShufflingStrategy extends MaskingStrategy{
 
         return shuffledList;
     }
-
 }
