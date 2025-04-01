@@ -11,7 +11,9 @@
   <properties>
 		<java.version>17</java.version>
 	</properties>
+
   <dependencies>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -20,19 +22,27 @@
     </dependency>
 
     <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>4.0.0</version>
-  </dependency>
-  <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>4.0.0</version>
-  </dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>4.0.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>4.0.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-core</artifactId>
+        <version>4.0.2</version>
+    </dependency>
 
   </dependencies>
 
   <build>
+  
       <plugins>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -41,11 +51,24 @@
               <configuration>
                   <source>17</source>
                   <target>17</target>
+                  <release>17</release>
                   <sourceDirectory>src/main/java</sourceDirectory>
-
               </configuration>
-              
           </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>3.2.2</version>
+              <configuration>
+                  <archive>
+                      <manifest>
+                          <mainClass>datamaskingtool.App</mainClass>  <!-- Replace with your main class -->
+                      </manifest>
+                  </archive>
+              </configuration>
+          </plugin>
+      
       </plugins>
   </build>
 </project>
