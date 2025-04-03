@@ -8,6 +8,7 @@ public class Column {
     private String data_type;
     private String nullable;
     private String auto_increment;
+    private String column_size;
     private String default_value;
     private String masking_strategy;
 
@@ -20,6 +21,9 @@ public class Column {
 
     public String getNullable() { return nullable; }
     public void setNullable(String nullable) { this.nullable = nullable; }
+
+    public String getColumn_size(){return column_size;}
+    public void setColumn_size(String column_size){this.column_size = column_size;}
 
     public String getMaskingStrategy(){return masking_strategy;}
     public void setMaskingStrategy(String masking_strategy){this.masking_strategy = masking_strategy; }

@@ -83,24 +83,5 @@ public class DatabaseTopologicalSort {
         }
 
         return sortedOrder;
-
-        // Step 5: Reorder to place primary keys first while maintaining relative order
-//        List<String> finalOrder = new ArrayList<>();
-//
-//        // Add primary keys first, in their original sorted order
-//        for (String column : sortedOrder) {
-//            if (primaryKeys.contains(column)) {
-//                finalOrder.add(column);
-//            }
-//        }
-//
-//        // Add remaining columns while preserving order
-//        for (String column : sortedOrder) {
-//            if (!primaryKeys.contains(column)) {
-//                finalOrder.add(column);
-//            }
-//        }
-//
-//        return finalOrder;
     }
 }

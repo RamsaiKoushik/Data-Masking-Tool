@@ -19,6 +19,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -27,6 +28,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -35,6 +37,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>9</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -43,6 +46,7 @@
                     <data_type>DATE</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>10</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -72,6 +76,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>9</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -80,6 +85,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -88,6 +94,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>1</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -96,6 +103,7 @@
                     <data_type>DATE</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>10</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -104,6 +112,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>20</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -133,6 +142,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -141,6 +151,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>20</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -168,6 +179,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -176,6 +188,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>1</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -184,6 +197,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -192,6 +206,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>9</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -200,6 +215,7 @@
                     <data_type>DATE</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>10</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -208,6 +224,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -216,6 +233,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>1</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -224,6 +242,7 @@
                     <data_type>DECIMAL</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>10</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -232,6 +251,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>9</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -240,6 +260,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -272,6 +293,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -280,6 +302,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -288,6 +311,7 @@
                     <data_type>VARCHAR</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>30</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -296,6 +320,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -325,6 +350,7 @@
                     <data_type>CHAR</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>9</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -333,6 +359,7 @@
                     <data_type>SMALLINT</data_type>
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>5</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
@@ -341,6 +368,7 @@
                     <data_type>DECIMAL</data_type>
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
+                    <column_size>4</column_size>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
