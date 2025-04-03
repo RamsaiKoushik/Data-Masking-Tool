@@ -47,7 +47,13 @@
                     <masking_strategy>HASH</masking_strategy>
                 </column>
             </columns>
-            <foreign_keys/>
+            <foreign_keys>
+                <foreign_key>
+                    <foreign_table>employee</foreign_table>
+                    <column_name>mgr_ssn</column_name>
+                    <foreign_column>ssn</foreign_column>
+                </foreign_key>
+            </foreign_keys>
         </table>
 
         <table>
@@ -189,6 +195,54 @@
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
+                <column>
+                    <column_name>bdate</column_name>
+                    <data_type>DATE</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>address</column_name>
+                    <data_type>VARCHAR</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>sex</column_name>
+                    <data_type>CHAR</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>salary</column_name>
+                    <data_type>DECIMAL</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>super_ssn</column_name>
+                    <data_type>CHAR</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>dno</column_name>
+                    <data_type>SMALLINT</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
             </columns>
             <foreign_keys>
                 <foreign_key>
@@ -229,6 +283,22 @@
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
                 </column>
+                <column>
+                    <column_name>plocation</column_name>
+                    <data_type>VARCHAR</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>dnum</column_name>
+                    <data_type>SMALLINT</data_type>
+                    <nullable>YES</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
             </columns>
             <foreign_keys>
                 <foreign_key>
@@ -262,6 +332,14 @@
                     <column_name>pno</column_name>
                     <data_type>SMALLINT</data_type>
                     <nullable>NO</nullable>
+                    <auto_increment>NO</auto_increment>
+                    <default_value/>
+                    <masking_strategy>HASH</masking_strategy>
+                </column>
+                <column>
+                    <column_name>hours</column_name>
+                    <data_type>DECIMAL</data_type>
+                    <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <default_value/>
                     <masking_strategy>HASH</masking_strategy>
