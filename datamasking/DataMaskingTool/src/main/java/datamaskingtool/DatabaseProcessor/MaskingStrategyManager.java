@@ -8,10 +8,9 @@ import datamaskingtool.maskingStrategiesFactories.ShufflingStrategyFactory;
 
 public class MaskingStrategyManager{
     private MaskingStrategy mStrategy;
+    private MaskingStrategyFactory factory;
 
-    public MaskingStrategyManager(String strategy) {
-       MaskingStrategyFactory factory;
-       
+    public void setMaskingStrategy(String strategy){
         if ("Shuffle".equals(strategy)) {
             factory = new ShufflingStrategyFactory();
         } 
@@ -28,8 +27,13 @@ public class MaskingStrategyManager{
         
         mStrategy = factory.createStrategy();
     }
+    
+    public MaskingStrategyManager(String strategy) {
+       setMaskingStrategy(strategy);
+    }
 
     public MaskingStrategy getStrategy() {
         return mStrategy;
     }
+
 }

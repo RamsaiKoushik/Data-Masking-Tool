@@ -17,11 +17,11 @@ public class StringRedactor implements Redactor<String> {
 
     @Override
     public String partiallyRedact(String value) {
-        int visibleChars = Math.max(1, value.length() / 4); // Keep 25% of the original length visible
+        int visibleChars = Math.max(1, value.length() / 2); // Keep 25% of the original length visible
         int redactLength = value.length() - visibleChars;
 
         String visiblePart = value.substring(0, visibleChars);
-        String redactedPart = "*".repeat(redactLength);
+        String redactedPart = new String(new char[redactLength]).replace("\0", "*");
 
         return visiblePart + redactedPart;
     }
