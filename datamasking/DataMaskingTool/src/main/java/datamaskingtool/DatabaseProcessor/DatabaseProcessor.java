@@ -1,6 +1,11 @@
 package datamaskingtool.DatabaseProcessor;
 import java.sql.*;
 import java.util.*;
+
+import datamaskingtool.CustomClasses.CustomFloatList;
+import datamaskingtool.CustomClasses.CustomIntegerList;
+import datamaskingtool.CustomClasses.CustomStringList;
+import datamaskingtool.CustomClasses.ListObjectWithDataType;
 import datamaskingtool.DataClasses.*;
 
 public class DatabaseProcessor {
@@ -52,10 +57,50 @@ public class DatabaseProcessor {
 
                 // Step 4: Retrieve and output the masking strategy
                 String maskingStrategy = column.getMaskingStrategy();
+                MaskingStrategyManager msm = new MaskingStrategyManager(maskingStrategy);
                 System.out.println("Column: " + columnName + " | Masking Strategy: " + maskingStrategy);
 
                 // Step 5: Query the original database for column values
-                List<String> column_values = fetchColumnValues(tableName, columnName);
+                ListObjectWithDataType values = fetchColumnValues(tableName, columnName);
+                int columnType = values.getColumnType();
+                
+                switch (columnType) {
+                    case Types.INTEGER:
+                        List<Integer> integerList = values.getList().stream()
+                                .filter(obj -> obj instanceof Number) // Ensure it's a number
+                                .map(obj -> ((Number) obj).intValue()) // Convert to Integer
+                                .toList();
+                        CustomIntegerList customIntegerList = new CustomIntegerList(integerList);
+                        break;
+                    case Types.FLOAT:
+                    case Types.DOUBLE:
+                    case Types.REAL:
+                        List<Float> floatList = values.getList().stream()
+                                .filter(obj -> obj instanceof Number)
+                                .map(obj -> ((Number) obj).floatValue()) // Convert to Float
+                                .toList();
+                        CustomFloatList customFloatList = new CustomFloatList(floatList);
+                        break;
+                    case Types.BOOLEAN:
+
+                        values.add(rs.getBoolean(columnName));
+                        break;
+                    case Types.DATE:
+                        values.add(rs.getDate(columnName));
+                        break;
+                    case Types.TIMESTAMP:
+                        values.add(rs.getTimestamp(columnName));
+                        break;
+                    case Types.VARCHAR:
+                    case Types.CHAR:
+                    case Types.LONGVARCHAR:
+                        List<String> stringList = values.getList().stream()
+                                .map(String::valueOf) // Converts everything to String
+                                .toList();
+                        CustomStringList customStringList = new CustomStringList();
+                        break;
+                }
+
 
             }
 
@@ -104,24 +149,52 @@ public class DatabaseProcessor {
         System.out.println("Created Table: " + table.getTableName());
     }
 
-    private List<String> fetchColumnValues(String tableName, String columnName) {
+    private ListObjectWithDataType fetchColumnValues(String tableName, String columnName) {
         String query = "SELECT " + columnName + " FROM " + tableName;
         try (Connection conn = DriverManager.getConnection(DB_URL + OLD_DB_NAME, USER, PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
-            List<String> values = new ArrayList<>();
-            while (rs.next()) {
-                values.add(rs.getString(columnName));
-            }
-            System.out.println("Values for " + tableName + "." + columnName + ": " + values);
+            List<Object> values = new ArrayList<>();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnType = metaData.getColumnType(1);
 
-            return values;
+            while (rs.next()) {
+                switch (columnType) {
+                    case Types.INTEGER:
+                        values.add(rs.getInt(columnName));
+                        break;
+                    case Types.FLOAT:
+                    case Types.DOUBLE:
+                    case Types.REAL:
+                        values.add(rs.getDouble(columnName)); // Use double to cover all float types
+                        break;
+                    case Types.BOOLEAN:
+                        values.add(rs.getBoolean(columnName));
+                        break;
+                    case Types.DATE:
+                        values.add(rs.getDate(columnName));
+                        break;
+                    case Types.TIMESTAMP:
+                        values.add(rs.getTimestamp(columnName));
+                        break;
+                    case Types.VARCHAR:
+                    case Types.CHAR:
+                    case Types.LONGVARCHAR:
+                        values.add(rs.getString(columnName));
+                        break;
+                    default:
+                        values.add(rs.getObject(columnName)); // Fallback for unknown types
+                }
+            }
+
+            System.out.println("Values for " + tableName + "." + columnName + ": " + values);
+            return new ListObjectWithDataType(values, columnType);
 
         } catch (SQLException e) {
             System.out.println("Error retrieving values for " + tableName + "." + columnName);
             e.printStackTrace();
-            return new ArrayList<>();
+            return new ListObjectWithDataType(new ArrayList<>(), -1);
         }
     }
 }
