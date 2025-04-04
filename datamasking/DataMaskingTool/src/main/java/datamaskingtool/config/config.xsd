@@ -43,6 +43,7 @@
                                                                     type="xs:string" />
                                                                 <xs:element name="auto_increment"
                                                                     type="xs:string" />
+                                                                <xs:element name="column_size" type="xs:string"></xs:element>
                                                                 <xs:element name="default_value" />
                                                                 <xs:element name="masking_strategy"
                                                                     type="xs:string" />

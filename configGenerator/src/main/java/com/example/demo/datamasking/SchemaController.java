@@ -37,6 +37,7 @@ public class SchemaController {
                             columnInfo.put("nullable", columnsResultSet.getString("IS_NULLABLE"));
                             columnInfo.put("default_value", columnsResultSet.getString("COLUMN_DEF"));
                             columnInfo.put("auto_increment", columnsResultSet.getString("IS_AUTOINCREMENT"));
+                            columnInfo.put("column_size", String.valueOf(columnsResultSet.getInt("COLUMN_SIZE")));
                             columns.add(columnInfo);
                         }
                     }

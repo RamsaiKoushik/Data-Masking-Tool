@@ -1,4 +1,4 @@
-package datamaskingtool;
+package datamaskingtool.DatabaseProcessor;
 
 import datamaskingtool.maskingStrategies.MaskingStrategy;
 import datamaskingtool.maskingStrategiesFactories.EncryptionStrategyFactory;

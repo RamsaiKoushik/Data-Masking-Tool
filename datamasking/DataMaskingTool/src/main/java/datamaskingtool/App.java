@@ -3,7 +3,9 @@ import datamaskingtool.DataClasses.XMLParser;
 import datamaskingtool.CustomClasses.CustomFloatList;
 import datamaskingtool.CustomClasses.CustomStringList;
 import datamaskingtool.DataClasses.Database;
+import datamaskingtool.DatabaseProcessor.DatabaseProcessor;
 import datamaskingtool.TopologicalSort.DatabaseTopologicalSort;
+import datamaskingtool.DatabaseProcessor.MaskingStrategyManager;
 import java.util.List;
 
 public class App 
@@ -24,5 +26,9 @@ public class App
         for(Float s: csl){
             System.out.println(s);
         }
+
+        DatabaseProcessor databaseProcessor = new DatabaseProcessor(database, "jdbc:mysql://localhost:3306/", "companydbnew");
+        databaseProcessor.processDatabase(columns);
+
     }
 }

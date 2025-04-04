@@ -13,7 +13,7 @@ function GetSchema() {
     setError("");
     try {
       const schema = await fetchSchema(dbUrl, username, password);
-      navigate("/maskSchema", { state: { schema } });
+      navigate("/maskSchema", { state: { schema, dbUrl, username, password } });
     } catch (err) {
       setError("Failed to fetch schema. Check credentials or server.");
     }
