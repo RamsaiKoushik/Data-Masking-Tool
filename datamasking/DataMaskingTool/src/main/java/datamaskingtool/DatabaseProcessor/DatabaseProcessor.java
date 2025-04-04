@@ -63,7 +63,7 @@ public class DatabaseProcessor {
                 // Step 5: Query the original database for column values
                 ListObjectWithDataType values = fetchColumnValues(tableName, columnName);
                 int columnType = values.getColumnType();
-                
+
                 switch (columnType) {
                     case Types.INTEGER:
                         List<Integer> integerList = values.getList().stream()
@@ -82,14 +82,10 @@ public class DatabaseProcessor {
                         CustomFloatList customFloatList = new CustomFloatList(floatList);
                         break;
                     case Types.BOOLEAN:
-
-                        values.add(rs.getBoolean(columnName));
                         break;
                     case Types.DATE:
-                        values.add(rs.getDate(columnName));
                         break;
                     case Types.TIMESTAMP:
-                        values.add(rs.getTimestamp(columnName));
                         break;
                     case Types.VARCHAR:
                     case Types.CHAR:
