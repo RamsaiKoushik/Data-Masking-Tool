@@ -76,7 +76,7 @@ public class EncryptionStrategy extends MaskingStrategy {
 
 
     private float encryptFloat(float value) {
-        float noise = secureRandom.nextFloat() * 10; // Add up to ±10 random noise
+        float noise = secureRandom.nextFloat() * 100; // Add up to ±10 random noise
         return value + noise;
     }
 

@@ -17,7 +17,7 @@ public class ShufflingStrategy extends MaskingStrategy{
         CustomStringList shuffledList = new CustomStringList();
         shuffledList.addAll(values);
         Collections.shuffle(shuffledList);// Create an immutable copy
-
+    
         return shuffledList;
     }
 
