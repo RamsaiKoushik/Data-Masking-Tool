@@ -7,6 +7,7 @@ import datamaskingtool.CustomClasses.CustomIntegerList;
 import datamaskingtool.CustomClasses.CustomStringList;
 import datamaskingtool.CustomClasses.ListObjectWithDataType;
 import datamaskingtool.DataClasses.*;
+import datamaskingtool.maskingStrategies.MaskingStrategy;
 
 public class DatabaseProcessor {
     private Database database;
@@ -58,6 +59,8 @@ public class DatabaseProcessor {
                 // Step 4: Retrieve and output the masking strategy
                 String maskingStrategy = column.getMaskingStrategy();
                 MaskingStrategyManager msm = new MaskingStrategyManager(maskingStrategy);
+                MaskingStrategy strategy = msm.getStrategy();
+
                 System.out.println("Column: " + columnName + " | Masking Strategy: " + maskingStrategy);
 
                 // Step 5: Query the original database for column values
