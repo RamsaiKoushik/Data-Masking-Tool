@@ -7,6 +7,12 @@ import java.util.*;
 public class CustomFloatList implements List<Float> {
     private List<Float> internalList = new ArrayList<>();
 
+    public CustomFloatList(List<Float> list){
+        this.internalList = list;
+    }
+
+    public CustomFloatList(){}
+
     @Override
     public int size() {
         return internalList.size();

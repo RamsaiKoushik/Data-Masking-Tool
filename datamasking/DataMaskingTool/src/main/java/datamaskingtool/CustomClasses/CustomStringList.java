@@ -7,6 +7,12 @@ import java.util.*;
 public class CustomStringList implements List<String> {
     private List<String> internalList = new ArrayList<>();
 
+    public CustomStringList(List<String> list){
+        this.internalList = list;
+    }
+
+    public CustomStringList(){}
+
     @Override
     public int size() {
         return internalList.size();
