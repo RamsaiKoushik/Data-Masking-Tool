@@ -1,11 +1,8 @@
 package datamaskingtool.DatabaseProcessor;
 import java.sql.*;
 import java.util.*;
-
-import datamaskingtool.CustomClasses.CustomFloatList;
-import datamaskingtool.CustomClasses.CustomIntegerList;
-import datamaskingtool.CustomClasses.CustomStringList;
-import datamaskingtool.CustomClasses.ListObjectWithDataType;
+import java.sql.Date;
+import datamaskingtool.CustomClasses.*;
 import datamaskingtool.DataClasses.*;
 import datamaskingtool.maskingStrategies.MaskingStrategy;
 
@@ -85,11 +82,44 @@ public class DatabaseProcessor {
                         CustomFloatList customFloatList = new CustomFloatList(floatList);
                         break;
                     case Types.BOOLEAN:
+                        List<Boolean> booleanList = values.getList().stream()
+                                .map(obj -> {
+                                    if (obj instanceof Boolean) return (Boolean) obj;
+                                    if (obj instanceof String) return Boolean.parseBoolean(((String) obj).toLowerCase());
+                                    return null; // Ignore unsupported types
+                                })
+                                .filter(Objects::nonNull)
+                                .toList();
+                        CustomBooleanList customBooleanList = new CustomBooleanList(booleanList);
                         break;
                     case Types.DATE:
+                        List<Date> dateList = values.getList().stream()
+                                .map(obj -> {
+                                    try {
+                                        if (obj instanceof Date) return (Date) obj;
+                                        if (obj instanceof String) return Date.valueOf((String) obj);
+                                        if (obj instanceof Number) return new Date(((Number) obj).longValue());
+                                    } catch (Exception ignored) {}
+                                    return null;
+                                })
+                                .filter(Objects::nonNull)
+                                .toList();
+                        CustomDateList customDateList = new CustomDateList(dateList);
                         break;
-                    case Types.TIMESTAMP:
-                        break;
+//                    case Types.TIMESTAMP:
+//                        List<Timestamp> timestampList = values.getList().stream()
+//                                .map(obj -> {
+//                                    try {
+//                                        if (obj instanceof Timestamp) return (Timestamp) obj;
+//                                        if (obj instanceof String) return Timestamp.valueOf((String) obj);
+//                                        if (obj instanceof Number) return new Timestamp(((Number) obj).longValue());
+//                                    } catch (Exception ignored) {}
+//                                    return null;
+//                                })
+//                                .filter(Objects::nonNull)
+//                                .toList();
+//
+//                        break;
                     case Types.VARCHAR:
                     case Types.CHAR:
                     case Types.LONGVARCHAR:
@@ -174,9 +204,9 @@ public class DatabaseProcessor {
                     case Types.DATE:
                         values.add(rs.getDate(columnName));
                         break;
-                    case Types.TIMESTAMP:
-                        values.add(rs.getTimestamp(columnName));
-                        break;
+//                    case Types.TIMESTAMP:
+//                        values.add(rs.getTimestamp(columnName));
+//                        break;
                     case Types.VARCHAR:
                     case Types.CHAR:
                     case Types.LONGVARCHAR:

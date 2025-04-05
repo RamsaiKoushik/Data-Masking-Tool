@@ -3,7 +3,13 @@ package datamaskingtool.CustomClasses;
 import java.util.*;
 
 public class CustomBooleanList implements List<Boolean> {
-    private final List<Boolean> internalList = new ArrayList<>();
+    private List<Boolean> internalList = new ArrayList<>();
+
+    public CustomBooleanList(List<Boolean> list){
+        this.internalList = list;
+    }
+
+    public CustomBooleanList(){}
 
     @Override
     public int size() {

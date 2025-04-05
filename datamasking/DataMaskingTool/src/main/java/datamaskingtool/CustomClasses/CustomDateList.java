@@ -1,9 +1,16 @@
 package datamaskingtool.CustomClasses;
 
 import java.util.*;
+import java.sql.Date;
 
 public class CustomDateList implements List<Date> {
-    private final List<Date> internalList = new ArrayList<>();
+    private List<Date> internalList = new ArrayList<>();
+
+    public CustomDateList(List<Date> list){
+        this.internalList = list;
+    }
+
+    public CustomDateList(){}
 
     @Override
     public int size() {
