@@ -1,7 +1,7 @@
 package datamaskingtool.maskingStrategies.Redaction;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
 
 public class DateRedactor implements Redactor<Date> {
 
@@ -31,6 +31,6 @@ public class DateRedactor implements Redactor<Date> {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        return calendar.getTime();
+        return (Date) calendar.getTime();
     }
 }

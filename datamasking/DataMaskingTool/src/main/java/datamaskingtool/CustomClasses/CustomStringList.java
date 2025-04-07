@@ -55,7 +55,7 @@ public class CustomStringList implements List<String> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return internalList.containsAll(c);
+        return new HashSet<>(internalList).containsAll(c);
     }
 
     @Override

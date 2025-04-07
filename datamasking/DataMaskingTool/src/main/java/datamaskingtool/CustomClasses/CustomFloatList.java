@@ -55,7 +55,7 @@ public class CustomFloatList implements List<Float> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return internalList.containsAll(c);
+        return new HashSet<>(internalList).containsAll(c);
     }
 
     @Override
