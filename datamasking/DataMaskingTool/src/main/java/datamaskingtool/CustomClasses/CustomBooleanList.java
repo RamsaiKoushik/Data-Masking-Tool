@@ -1,17 +1,15 @@
 package datamaskingtool.CustomClasses;
 
-import java.util.List;
-
 import java.util.*;
 
-public class CustomFloatList implements List<Float> {
-    private List<Float> internalList = new ArrayList<>();
+public class CustomBooleanList implements List<Boolean> {
+    private List<Boolean> internalList = new ArrayList<>();
 
-    public CustomFloatList(List<Float> list){
+    public CustomBooleanList(List<Boolean> list){
         this.internalList = list;
     }
 
-    public CustomFloatList(){}
+    public CustomBooleanList(){}
 
     @Override
     public int size() {
@@ -29,7 +27,7 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public Iterator<Float> iterator() {
+    public Iterator<Boolean> iterator() {
         return internalList.iterator();
     }
 
@@ -44,8 +42,8 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public boolean add(Float s) {
-        return internalList.add(s);
+    public boolean add(Boolean b) {
+        return internalList.add(b);
     }
 
     @Override
@@ -59,12 +57,12 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Float> c) {
+    public boolean addAll(Collection<? extends Boolean> c) {
         return internalList.addAll(c);
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends Float> c) {
+    public boolean addAll(int index, Collection<? extends Boolean> c) {
         return internalList.addAll(index, c);
     }
 
@@ -84,22 +82,22 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public Float get(int index) {
+    public Boolean get(int index) {
         return internalList.get(index);
     }
 
     @Override
-    public Float set(int index, Float element) {
+    public Boolean set(int index, Boolean element) {
         return internalList.set(index, element);
     }
 
     @Override
-    public void add(int index, Float element) {
+    public void add(int index, Boolean element) {
         internalList.add(index, element);
     }
 
     @Override
-    public Float remove(int index) {
+    public Boolean remove(int index) {
         return internalList.remove(index);
     }
 
@@ -114,17 +112,17 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public ListIterator<Float> listIterator() {
+    public ListIterator<Boolean> listIterator() {
         return internalList.listIterator();
     }
 
     @Override
-    public ListIterator<Float> listIterator(int index) {
+    public ListIterator<Boolean> listIterator(int index) {
         return internalList.listIterator(index);
     }
 
     @Override
-    public List<Float> subList(int fromIndex, int toIndex) {
+    public List<Boolean> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
 }

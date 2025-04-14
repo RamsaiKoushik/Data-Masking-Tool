@@ -7,6 +7,12 @@ import java.util.*;
 public class CustomStringList implements List<String> {
     private List<String> internalList = new ArrayList<>();
 
+    public CustomStringList(List<String> list){
+        this.internalList = list;
+    }
+
+    public CustomStringList(){}
+
     @Override
     public int size() {
         return internalList.size();
@@ -49,7 +55,7 @@ public class CustomStringList implements List<String> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return internalList.containsAll(c);
+        return new HashSet<>(internalList).containsAll(c);
     }
 
     @Override

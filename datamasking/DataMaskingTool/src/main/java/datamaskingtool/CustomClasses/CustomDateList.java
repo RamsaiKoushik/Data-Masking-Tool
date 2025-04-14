@@ -1,17 +1,16 @@
 package datamaskingtool.CustomClasses;
 
-import java.util.List;
-
 import java.util.*;
+import java.sql.Date;
 
-public class CustomFloatList implements List<Float> {
-    private List<Float> internalList = new ArrayList<>();
+public class CustomDateList implements List<Date> {
+    private List<Date> internalList = new ArrayList<>();
 
-    public CustomFloatList(List<Float> list){
+    public CustomDateList(List<Date> list){
         this.internalList = list;
     }
 
-    public CustomFloatList(){}
+    public CustomDateList(){}
 
     @Override
     public int size() {
@@ -29,7 +28,7 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public Iterator<Float> iterator() {
+    public Iterator<Date> iterator() {
         return internalList.iterator();
     }
 
@@ -44,8 +43,8 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public boolean add(Float s) {
-        return internalList.add(s);
+    public boolean add(Date date) {
+        return internalList.add(date);
     }
 
     @Override
@@ -59,12 +58,12 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Float> c) {
+    public boolean addAll(Collection<? extends Date> c) {
         return internalList.addAll(c);
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends Float> c) {
+    public boolean addAll(int index, Collection<? extends Date> c) {
         return internalList.addAll(index, c);
     }
 
@@ -84,22 +83,22 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public Float get(int index) {
+    public Date get(int index) {
         return internalList.get(index);
     }
 
     @Override
-    public Float set(int index, Float element) {
+    public Date set(int index, Date element) {
         return internalList.set(index, element);
     }
 
     @Override
-    public void add(int index, Float element) {
+    public void add(int index, Date element) {
         internalList.add(index, element);
     }
 
     @Override
-    public Float remove(int index) {
+    public Date remove(int index) {
         return internalList.remove(index);
     }
 
@@ -114,17 +113,17 @@ public class CustomFloatList implements List<Float> {
     }
 
     @Override
-    public ListIterator<Float> listIterator() {
+    public ListIterator<Date> listIterator() {
         return internalList.listIterator();
     }
 
     @Override
-    public ListIterator<Float> listIterator(int index) {
+    public ListIterator<Date> listIterator(int index) {
         return internalList.listIterator(index);
     }
 
     @Override
-    public List<Float> subList(int fromIndex, int toIndex) {
+    public List<Date> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
 }

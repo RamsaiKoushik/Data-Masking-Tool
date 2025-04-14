@@ -4,9 +4,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import datamaskingtool.CustomClasses.CustomBooleanList;
+import datamaskingtool.CustomClasses.CustomDateList;
 import datamaskingtool.CustomClasses.CustomFloatList;
 import datamaskingtool.CustomClasses.CustomIntegerList;
 import datamaskingtool.CustomClasses.CustomStringList;
+import datamaskingtool.maskingStrategies.Redaction.BooleanRedactor;
+import datamaskingtool.maskingStrategies.Redaction.DateRedactor;
 import datamaskingtool.maskingStrategies.Redaction.FloatRedactor;
 import datamaskingtool.maskingStrategies.Redaction.IntegerRedactor;
 import datamaskingtool.maskingStrategies.Redaction.StringRedactor;
@@ -56,6 +60,22 @@ public class RedactionStrategy extends MaskingStrategy{
         CustomFloatList maskedList = new CustomFloatList();
         values.forEach(value -> maskedList.add(floatRedactor.redactValue(value,this.fullRedaction))); // Apply redaction
     
+        return maskedList;
+    }
+
+    public CustomDateList mask(CustomDateList values){
+        DateRedactor dateRedactor = new DateRedactor();
+        CustomDateList maskedList = new CustomDateList();
+        values.forEach(value-> maskedList.add(dateRedactor.redactValue(value, fullRedaction)));
+
+        return maskedList;
+    }
+
+    public CustomBooleanList mask(CustomBooleanList values){
+        BooleanRedactor dateRedactor = new BooleanRedactor();
+        CustomBooleanList maskedList = new CustomBooleanList();
+        values.forEach(value-> maskedList.add(dateRedactor.redactValue(value, fullRedaction)));
+
         return maskedList;
     }
 }

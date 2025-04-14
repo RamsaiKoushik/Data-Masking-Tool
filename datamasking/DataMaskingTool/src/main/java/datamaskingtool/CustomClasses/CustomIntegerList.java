@@ -7,6 +7,12 @@ import java.util.*;
 public class CustomIntegerList implements List<Integer> {
     private List<Integer> internalList = new ArrayList<>();
 
+    public CustomIntegerList(List<Integer> list){
+        this.internalList = list;
+    }
+
+    public CustomIntegerList(){}
+
     @Override
     public int size() {
         return internalList.size();
@@ -49,7 +55,7 @@ public class CustomIntegerList implements List<Integer> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return internalList.containsAll(c);
+        return new HashSet<>(internalList).containsAll(c);
     }
 
     @Override
