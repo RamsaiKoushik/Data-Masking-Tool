@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import generateXML from "../api/generateXML";
 
 const MaskingStrategies = [
@@ -12,6 +12,8 @@ const MaskingStrategies = [
 ];
 
 function SchemaMasking() {
+  const navigate = useNavigate();
+
   const { state } = useLocation();
   const schema = state?.schema;
 
@@ -114,6 +116,9 @@ function SchemaMasking() {
       >
         <button onClick={handleSubmit} style={{ padding: "10px" }}>
           Submit Configuration
+        </button>
+        <button onClick={() => navigate("/editConfig")} style={{ marginLeft: "10px", padding: "10px" }}>
+          Choose Tables to Mask
         </button>
       </div>
     </div>
