@@ -7,15 +7,15 @@ const generateXML = (schema, maskingConfig, user_dbUrl, user_username, user_pass
     database.setAttribute("xsi:noNamespaceSchemaLocation", "config.xsd");
   
     const dbName = xmlDoc.createElement("db_name");
-    dbName.textContent = user_dbUrl; // Replace with actual database name
+    dbName.textContent = user_dbUrl; 
     database.appendChild(dbName);
   
     const username = xmlDoc.createElement("username");
-    username.textContent = user_username; // Replace with actual username
+    username.textContent = user_username; 
     database.appendChild(username);
   
     const password = xmlDoc.createElement("password");
-    password.textContent = user_password; // Replace with actual password
+    password.textContent = user_password; 
     database.appendChild(password);
   
     const tables = xmlDoc.createElement("tables");
@@ -26,6 +26,10 @@ const generateXML = (schema, maskingConfig, user_dbUrl, user_username, user_pass
       const tableName = xmlDoc.createElement("table_name");
       tableName.textContent = table.table_name;
       tableElement.appendChild(tableName);
+
+      const toMask = xmlDoc.createElement("to_mask");
+      toMask.textContent = table.to_mask ? table.to_mask : "Yes"; 
+      tableElement.appendChild(toMask);
   
       const primaryKeys = xmlDoc.createElement("primary_keys");
       table.primary_keys.forEach((key) => {
