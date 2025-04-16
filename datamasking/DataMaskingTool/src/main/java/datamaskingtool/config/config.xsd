@@ -13,6 +13,7 @@
                                 <xs:complexType>
                                     <xs:sequence>
                                         <xs:element name="table_name" type="xs:string" />
+                                        <xs:element name="to_mask" type="xs:string" />
                                         <xs:element name="primary_keys">
                                             <xs:complexType>
                                                 <xs:sequence>

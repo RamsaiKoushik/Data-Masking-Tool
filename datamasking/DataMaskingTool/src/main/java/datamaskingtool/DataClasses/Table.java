@@ -7,6 +7,8 @@ import java.util.List;
 public class Table {
     private String table_name;
 
+    private String to_mask;
+
     @XmlElementWrapper(name = "primary_keys")
     @XmlElement(name = "primary_key")
     private List<String> primaryKeys;
@@ -26,6 +28,9 @@ public class Table {
     // Getters and Setters
     public String getTableName() { return table_name; }
     public void setTableName(String table_name) { this.table_name = table_name; }
+
+    public String getTo_mask() { return to_mask; }
+    public void setTo_mask(String to_mask) { this.to_mask = to_mask; }
 
     public List<String> getPrimaryKeys() { return primaryKeys; }
     public void setPrimaryKeys(List<String> primaryKeys) { this.primaryKeys = primaryKeys; }

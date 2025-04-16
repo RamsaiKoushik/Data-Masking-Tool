@@ -1,12 +1,12 @@
 <database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="config.xsd">
+          xsi:noNamespaceSchemaLocation="config.xsd">
     <db_name>companydb</db_name>
     <username>root</username>
     <password>Siddhu*kothari04</password>
-
     <tables>
         <table>
             <table_name>department</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>dnumber</primary_key>
             </primary_keys>
@@ -20,8 +20,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>dnumber</column_name>
@@ -29,8 +29,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>mgr_ssn</column_name>
@@ -38,8 +38,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>mgr_start_date</column_name>
@@ -47,21 +47,15 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>10</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
-            <foreign_keys>
-                <foreign_key>
-                    <foreign_table>employee</foreign_table>
-                    <column_name>mgr_ssn</column_name>
-                    <foreign_column>ssn</foreign_column>
-                </foreign_key>
-            </foreign_keys>
+            <foreign_keys />
         </table>
-
         <table>
             <table_name>dependent</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>dependent_name</primary_key>
                 <primary_key>essn</primary_key>
@@ -77,8 +71,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>dependent_name</column_name>
@@ -86,8 +80,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>sex</column_name>
@@ -95,8 +89,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>1</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>bdate</column_name>
@@ -104,8 +98,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>10</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>relationship</column_name>
@@ -113,8 +107,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>20</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
             <foreign_keys>
@@ -125,9 +119,9 @@
                 </foreign_key>
             </foreign_keys>
         </table>
-
         <table>
             <table_name>dept_locations</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>dlocation</primary_key>
                 <primary_key>dnumber</primary_key>
@@ -143,8 +137,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>dlocation</column_name>
@@ -152,8 +146,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>20</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
             <foreign_keys>
@@ -164,9 +158,9 @@
                 </foreign_key>
             </foreign_keys>
         </table>
-
         <table>
             <table_name>employee</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>ssn</primary_key>
             </primary_keys>
@@ -180,8 +174,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>Shuffle</masking_strategy>
                 </column>
                 <column>
                     <column_name>minit</column_name>
@@ -189,8 +183,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>1</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>Shuffle</masking_strategy>
                 </column>
                 <column>
                     <column_name>lname</column_name>
@@ -198,8 +192,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>Shuffle</masking_strategy>
                 </column>
                 <column>
                     <column_name>ssn</column_name>
@@ -207,8 +201,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>bdate</column_name>
@@ -216,8 +210,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>10</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>address</column_name>
@@ -225,8 +219,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>sex</column_name>
@@ -234,8 +228,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>1</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>salary</column_name>
@@ -243,8 +237,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>10</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>super_ssn</column_name>
@@ -252,8 +246,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>dno</column_name>
@@ -261,8 +255,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
             <foreign_keys>
@@ -278,9 +272,9 @@
                 </foreign_key>
             </foreign_keys>
         </table>
-
         <table>
             <table_name>project</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>pnumber</primary_key>
             </primary_keys>
@@ -294,8 +288,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>pnumber</column_name>
@@ -303,8 +297,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>plocation</column_name>
@@ -312,8 +306,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>dnum</column_name>
@@ -321,8 +315,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
             <foreign_keys>
@@ -333,9 +327,9 @@
                 </foreign_key>
             </foreign_keys>
         </table>
-
         <table>
             <table_name>works_on</table_name>
+            <to_mask>Yes</to_mask>
             <primary_keys>
                 <primary_key>essn</primary_key>
                 <primary_key>pno</primary_key>
@@ -351,8 +345,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>pno</column_name>
@@ -360,8 +354,8 @@
                     <nullable>NO</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>5</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
                 <column>
                     <column_name>hours</column_name>
@@ -369,8 +363,8 @@
                     <nullable>YES</nullable>
                     <auto_increment>NO</auto_increment>
                     <column_size>4</column_size>
-                    <default_value/>
-                    <masking_strategy>HASH</masking_strategy>
+                    <default_value />
+                    <masking_strategy>no_masking</masking_strategy>
                 </column>
             </columns>
             <foreign_keys>
@@ -386,6 +380,5 @@
                 </foreign_key>
             </foreign_keys>
         </table>
-
     </tables>
 </database>

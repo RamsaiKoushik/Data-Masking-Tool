@@ -10,7 +10,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.util.Base64;
-import java.util.Date;
+import java.sql.Date;
 import java.nio.charset.StandardCharsets;
 
 import java.security.SecureRandom;

@@ -18,14 +18,14 @@ public class App
             System.out.println(column);
         }
 
-        MaskingStrategyManager msm = new MaskingStrategyManager("Encryption");
-        CustomFloatList csl = new CustomFloatList();
-        csl.add(200.4f);
-        csl.add(443.4f); csl.add(3332.3f);
-        csl=msm.getStrategy().mask(csl);
-        for(Float s: csl){
-            System.out.println(s);
-        }
+//        MaskingStrategyManager msm = new MaskingStrategyManager("Encryption");
+//        CustomFloatList csl = new CustomFloatList();
+//        csl.add(200.4f);
+//        csl.add(443.4f); csl.add(3332.3f);
+//        csl=msm.getStrategy().mask(csl);
+//        for(Float s: csl){
+//            System.out.println(s);
+//        }
 
         DatabaseProcessor databaseProcessor = new DatabaseProcessor(database, "jdbc:mysql://localhost:3306/", "companydbnew");
         databaseProcessor.processDatabase(columns);
