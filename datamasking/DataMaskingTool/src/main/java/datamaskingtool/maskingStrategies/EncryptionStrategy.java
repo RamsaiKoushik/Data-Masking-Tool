@@ -1,40 +1,72 @@
 package datamaskingtool.maskingStrategies;
 
-import datamaskingtool.CustomClasses.CustomBooleanList;
-import datamaskingtool.CustomClasses.CustomDateList;
-import datamaskingtool.CustomClasses.CustomFloatList;
-import datamaskingtool.CustomClasses.CustomIntegerList;
-import datamaskingtool.CustomClasses.CustomStringList;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.util.Base64;
+import datamaskingtool.CustomClasses.*;
+import com.privacylogistics.FF3Cipher;
 import java.sql.Date;
-import java.nio.charset.StandardCharsets;
-
 import java.security.SecureRandom;
 
 public class EncryptionStrategy extends MaskingStrategy {
 
-    private static final String AES_ALGORITHM = "AES";
-    private final SecretKey secretKey;
     private final SecureRandom secureRandom = new SecureRandom();
     private final Integer MOD = 100000000;
-    
+
+    // FPE parameters
+//    private final FPEString fpeEncryptor;
+    private final String fpeKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"; // 16-character key for AES-128 (adjust as needed)
+    private final String tweak = "abcdef1234567890";      // Tweak, should be consistent and secure
+    private FF3Cipher c6;
+
     public EncryptionStrategy() {
-        this.secretKey = generateKey(); // Generate a secure key
+        this.c6 = new FF3Cipher(fpeKey, tweak, generateFullASCIICharset());
     }
+
+    private String generateFullASCIICharset() {
+        StringBuilder sb = new StringBuilder();
+
+        // Lowercase letters (a-z)
+        for (int i = 97; i <= 122; i++) {
+            sb.append((char) i);
+        }
+
+        // Uppercase letters (A-Z)
+        for (int i = 65; i <= 90; i++) {
+            sb.append((char) i);
+        }
+
+        // Digits (0-9)
+        for (int i = 48; i <= 57; i++) {
+            sb.append((char) i);
+        }
+
+        // Symbols (ASCII 32-47, 58-64, 91-96, 123-126)
+        for (int i = 32; i <= 47; i++) {
+            sb.append((char) i);
+        }
+        for (int i = 58; i <= 64; i++) {
+            sb.append((char) i);
+        }
+        for (int i = 91; i <= 96; i++) {
+            sb.append((char) i);
+        }
+        for (int i = 123; i <= 126; i++) {
+            sb.append((char) i);
+        }
+
+        return sb.toString();
+    }
+
 
     @Override
     public CustomStringList mask(CustomStringList values) {
         if (values == null || values.isEmpty()) {
             return values;
         }
+
         CustomStringList encryptedList = new CustomStringList();
         for (String value : values) {
-            encryptedList.add(encryptString(value));
+            encryptedList.add(fpeEncrypt(value));
         }
+
         return encryptedList;
     }
 
@@ -43,10 +75,12 @@ public class EncryptionStrategy extends MaskingStrategy {
         if (values == null || values.isEmpty()) {
             return values;
         }
+
         CustomIntegerList encryptedList = new CustomIntegerList();
         for (Integer value : values) {
             encryptedList.add(encryptInteger(value));
         }
+
         return encryptedList;
     }
 
@@ -55,21 +89,23 @@ public class EncryptionStrategy extends MaskingStrategy {
         if (values == null || values.isEmpty()) {
             return values;
         }
+
         CustomFloatList encryptedList = new CustomFloatList();
         for (Float value : values) {
             encryptedList.add(encryptFloat(value));
         }
+
         return encryptedList;
     }
 
     @Override
-    public CustomDateList mask(CustomDateList values){
+    public CustomDateList mask(CustomDateList values) {
         if (values == null || values.isEmpty()) {
             return values;
         }
-        CustomDateList encryptedList = new CustomDateList();
 
-        for (Date value: values){
+        CustomDateList encryptedList = new CustomDateList();
+        for (Date value : values) {
             encryptedList.add(encryptDate(value));
         }
 
@@ -77,54 +113,40 @@ public class EncryptionStrategy extends MaskingStrategy {
     }
 
     @Override
-    public CustomBooleanList mask(CustomBooleanList  values){
+    public CustomBooleanList mask(CustomBooleanList values) {
         if (values == null || values.isEmpty()) {
             return values;
         }
 
-        CustomBooleanList  encryptedList = new CustomBooleanList();
-
-        for (Boolean value: values){
+        CustomBooleanList encryptedList = new CustomBooleanList();
+        for (Boolean value : values) {
             encryptedList.add(false);
         }
 
         return encryptedList;
     }
 
-    private String encryptString(String value) {
+    private String fpeEncrypt(String value) {
         try {
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] encryptedBytes = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(encryptedBytes); 
+            // Ensure the string only contains characters from the charset
+            return this.c6.encrypt(value);
         } catch (Exception e) {
-            throw new RuntimeException("Error encrypting string", e);
+            throw new RuntimeException("FPE encryption failed for: " + value, e);
         }
     }
 
     private int encryptInteger(int value) {
-        return (value%MOD*secureRandom.nextInt(1_000_000)%MOD)%MOD; 
+        return (value % MOD * secureRandom.nextInt(1_000_000) % MOD) % MOD;
     }
 
-    private Date encryptDate(Date date){
-        return new Date(0); 
+    private Date encryptDate(Date date) {
+        return new Date(0);
     }
 
     private float encryptFloat(float value) {
-        float noise = secureRandom.nextFloat() * 100; 
+        float noise = secureRandom.nextFloat() * 100;
         return value + noise;
     }
 
-   
-    private SecretKey generateKey() {
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(AES_ALGORITHM);
-            keyGen.init(256); // Use a 256-bit key
-            return keyGen.generateKey();
-        } catch (Exception e) {
-            throw new RuntimeException("Error generating AES key", e);
-        }
-    }
 
 }
-

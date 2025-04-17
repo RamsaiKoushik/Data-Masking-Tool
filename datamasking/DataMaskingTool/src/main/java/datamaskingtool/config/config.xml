@@ -21,7 +21,7 @@
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
                     <default_value />
-                    <masking_strategy>no_masking</masking_strategy>
+                    <masking_strategy>Shuffle</masking_strategy>
                 </column>
                 <column>
                     <column_name>dnumber</column_name>
@@ -81,7 +81,7 @@
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
                     <default_value />
-                    <masking_strategy>no_masking</masking_strategy>
+                    <masking_strategy>Redaction</masking_strategy>
                 </column>
                 <column>
                     <column_name>sex</column_name>

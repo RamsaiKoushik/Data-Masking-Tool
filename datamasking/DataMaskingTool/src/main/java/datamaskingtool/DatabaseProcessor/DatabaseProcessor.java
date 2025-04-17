@@ -119,11 +119,16 @@ public class DatabaseProcessor {
                 if (Objects.equals(maskingStrategy, "no_masking")){
                     continue;
                 }
+                if(Objects.equals(maskingStrategy, "LookupSubstitution")){
+                    maskingStrategy = "Encryption";
+                }
                 MaskingStrategyManager msm = new MaskingStrategyManager(maskingStrategy);
                 MaskingStrategy strategy = msm.getStrategy();
 
                 // Step 5: Query the original database for column values
                 ListObjectWithDataType values = fetchColumnValues(tableName, columnName);
+//                strategy.mask(values.getList());
+
                 int columnType = values.getColumnType();
 
                 switch (columnType) {
@@ -133,11 +138,12 @@ public class DatabaseProcessor {
                                 .map(obj -> ((Number) obj).intValue()) // Convert to Integer
                                 .toList();
                         CustomIntegerList customIntegerList = new CustomIntegerList(integerList);
+                        CustomIntegerList maskedIntegerList =  strategy.mask(customIntegerList);
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
                                      "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
 
-                            for (int i = 0; i < customIntegerList.size(); i++) {
+                            for (int i = 0; i < maskedIntegerList.size(); i++) {
                                 pstmt.setInt(1, customIntegerList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
@@ -211,7 +217,7 @@ public class DatabaseProcessor {
                         CustomDateList customDateList = new CustomDateList(dateList);
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
+                                "UPDATE " + table.getTableName() + " SET " + column.getColumnName() + " = ? WHERE row_num = ?")) {
 
                             for (int i = 0; i < customDateList.size(); i++) {
                                 pstmt.setDate(1, customDateList.get(i)); // value
@@ -244,13 +250,18 @@ public class DatabaseProcessor {
                         List<String> stringList = values.getList().stream()
                                 .map(String::valueOf) // Converts everything to String
                                 .toList();
-                        CustomStringList customStringList = new CustomStringList();
+                        CustomStringList customStringList = new CustomStringList(stringList);
+                        CustomStringList maskedStringList = strategy.mask(customStringList);
+
+                        for(String val: maskedStringList){
+                            System.out.print(val + ", ");
+                        }
+                        System.out.println("\n");
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
-
-                            for (int i = 0; i < customStringList.size(); i++) {
-                                pstmt.setString(1, customStringList.get(i)); // value
+                                "UPDATE " + table.getTableName() + " SET " + column.getColumnName() + " = ? WHERE row_num = ?")) {
+                            for (int i = 0; i < maskedStringList.size(); i++) {
+                                pstmt.setString(1, maskedStringList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
                             }
@@ -310,8 +321,8 @@ public class DatabaseProcessor {
     }
 
     private ListObjectWithDataType fetchColumnValues(String tableName, String columnName) {
-        String query = "SELECT " + columnName + " FROM " + tableName;
-        try (Connection conn = DriverManager.getConnection(DB_URL + OLD_DB_NAME, USER, PASSWORD);
+        String query = "SELECT " + columnName + " FROM " + tableName + " ORDER BY row_num" ;
+        try (Connection conn = DriverManager.getConnection(DB_URL + NEW_DB_NAME, USER, PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
