@@ -1,6 +1,9 @@
 package datamaskingtool.DataClasses;
 
 import jakarta.xml.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -43,4 +46,14 @@ public class Table {
 
     public List<ForeignKey> getForeignKeys() { return foreignKeys; }
     public void setForeignKeys(List<ForeignKey> foreignKeys) { this.foreignKeys = foreignKeys; }
+
+    public List<String> getReferencedColumn(String columnName){
+        for (ForeignKey f: foreignKeys){
+            if (f.getColumnName().equals(columnName)){
+                return new ArrayList<>(Arrays.asList(f.getForeignTable(), f.getForeignColumn()));
+            }
+        }
+
+        return new ArrayList<>(Arrays.asList("", ""));
+    }
 }

@@ -127,4 +127,8 @@ public class CustomIntegerList implements List<Integer> {
     public List<Integer> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
+
+    public List<Integer> getInternalList(){
+        return internalList;
+    }
 }

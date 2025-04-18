@@ -1,39 +1,33 @@
 package datamaskingtool.DatabaseProcessor;
 
 import datamaskingtool.maskingStrategies.MaskingStrategy;
-import datamaskingtool.maskingStrategiesFactories.EncryptionStrategyFactory;
-import datamaskingtool.maskingStrategiesFactories.MaskingStrategyFactory;
-import datamaskingtool.maskingStrategiesFactories.RedactionStrategyFactory;
-import datamaskingtool.maskingStrategiesFactories.ShufflingStrategyFactory;
+import datamaskingtool.maskingStrategiesFactories.*;
 
 public class MaskingStrategyManager{
-    private MaskingStrategy mStrategy;
+
     private MaskingStrategyFactory factory;
 
-    public void setMaskingStrategy(String strategy){
+    public MaskingStrategy returnMaskingStrategy(String strategy, String tableName, String columnName){
         if ("Shuffle".equals(strategy)) {
             factory = new ShufflingStrategyFactory();
         } 
-        else if("Redaction".equals(strategy)){
-            boolean fullRedaction=false;
-            factory=new RedactionStrategyFactory(fullRedaction);
+        else if("FullRedaction".equals(strategy)){
+            factory = new RedactionStrategyFactory(true);
+        }else if ("PartialRedaction".equals(strategy)){
+            factory = new RedactionStrategyFactory(false);
         }
         else if("Encryption".equals(strategy)){
-            factory=new EncryptionStrategyFactory();
+            factory = new EncryptionStrategyFactory();
+        }
+        else if ("LookupSubstitution".equals(strategy)){
+            factory = new LookupSubstitutionStrategyFactory(tableName, columnName);
+        }else if ("no_masking".equals(strategy)){
+            factory = new NoMaskingStrategyFactory();
         }
         else {
             throw new IllegalArgumentException("Unknown masking strategy: " + strategy);
         }
         
-        mStrategy = factory.createStrategy();
+        return factory.createStrategy();
     }
-    
-    public MaskingStrategyManager(String strategy) {
-       setMaskingStrategy(strategy);
-    }
-
-    public MaskingStrategy getStrategy() {
-        return mStrategy;
-    }
-
 }

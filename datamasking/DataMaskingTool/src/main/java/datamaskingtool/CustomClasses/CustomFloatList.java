@@ -127,4 +127,8 @@ public class CustomFloatList implements List<Float> {
     public List<Float> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
+
+    public List<Float> getInternalList(){
+        return internalList;
+    }
 }

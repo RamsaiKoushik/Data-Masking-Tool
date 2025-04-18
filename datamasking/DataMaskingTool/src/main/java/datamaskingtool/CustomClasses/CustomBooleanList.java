@@ -125,4 +125,8 @@ public class CustomBooleanList implements List<Boolean> {
     public List<Boolean> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
+
+    public List<Boolean> getInternalList(){
+        return internalList;
+    }
 }

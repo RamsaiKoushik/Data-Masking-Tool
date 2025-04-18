@@ -127,4 +127,8 @@ public class CustomStringList implements List<String> {
     public List<String> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
+
+    public List<String> getInternalList(){
+        return internalList;
+    }
 }

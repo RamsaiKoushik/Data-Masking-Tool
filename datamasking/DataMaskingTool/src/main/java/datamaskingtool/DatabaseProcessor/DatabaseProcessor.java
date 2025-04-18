@@ -4,6 +4,7 @@ import java.util.*;
 import java.sql.Date;
 import datamaskingtool.CustomClasses.*;
 import datamaskingtool.DataClasses.*;
+import datamaskingtool.maskingStrategies.LookupSubstitutionStrategy;
 import datamaskingtool.maskingStrategies.MaskingStrategy;
 
 public class DatabaseProcessor {
@@ -83,19 +84,13 @@ public class DatabaseProcessor {
         }
     }
 
-
-
     public void processDatabase(List<String> sortedColumns) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
              Statement stmt = conn.createStatement()) {
 
-            // Step 1: Drop database if it exists and create a new one
-//            stmt.executeUpdate("DROP DATABASE IF EXISTS " + NEW_DB_NAME);
-//            stmt.executeUpdate("CREATE DATABASE " + NEW_DB_NAME);
-
             ReplicateDatabase();
             stmt.executeUpdate("USE " + NEW_DB_NAME);
-
+            MaskingStrategyManager msm = new MaskingStrategyManager();
 
             for (String entry : sortedColumns) {
                 String[] parts = entry.split("\\.");
@@ -105,30 +100,19 @@ public class DatabaseProcessor {
                 Table table = getTableByName(database, tableName);
                 if (table == null) continue;
 
-                if (Objects.equals(table.getTo_mask(), "NO")){
-                    continue;
-                }
-
                 Column column = getColumnByName(table, columnName);
                 if (column == null) continue;
+
+                List<String> list = table.getReferencedColumn(columnName);
+                boolean isPrimaryKey = table.getPrimaryKeys().contains(columnName);
 
                 // Step 4: Retrieve and output the masking strategy
                 String maskingStrategy = column.getMaskingStrategy();
                 System.out.println("Column: " + columnName + " | Masking Strategy: " + maskingStrategy);
-
-                if (Objects.equals(maskingStrategy, "no_masking")){
-                    continue;
-                }
-                if(Objects.equals(maskingStrategy, "LookupSubstitution")){
-                    maskingStrategy = "Encryption";
-                }
-                MaskingStrategyManager msm = new MaskingStrategyManager(maskingStrategy);
-                MaskingStrategy strategy = msm.getStrategy();
+                MaskingStrategy strategy = msm.returnMaskingStrategy(maskingStrategy, list.get(0), list.get(1));
 
                 // Step 5: Query the original database for column values
                 ListObjectWithDataType values = fetchColumnValues(tableName, columnName);
-//                strategy.mask(values.getList());
-
                 int columnType = values.getColumnType();
 
                 switch (columnType) {
@@ -144,7 +128,7 @@ public class DatabaseProcessor {
                                      "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
 
                             for (int i = 0; i < maskedIntegerList.size(); i++) {
-                                pstmt.setInt(1, customIntegerList.get(i)); // value
+                                pstmt.setInt(1, maskedIntegerList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
                             }
@@ -152,6 +136,8 @@ public class DatabaseProcessor {
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
+
+                        updateLookupTables(isPrimaryKey, tableName, columnName, customIntegerList.getInternalList(), maskedIntegerList.getInternalList());
 
                         break;
                     case Types.FLOAT:
@@ -162,12 +148,13 @@ public class DatabaseProcessor {
                                 .map(obj -> ((Number) obj).floatValue()) // Convert to Float
                                 .toList();
                         CustomFloatList customFloatList = new CustomFloatList(floatList);
+                        CustomFloatList maskedFloatList =  strategy.mask(customFloatList);
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
                                 "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
 
-                            for (int i = 0; i < customFloatList.size(); i++) {
-                                pstmt.setFloat(1, customFloatList.get(i)); // value
+                            for (int i = 0; i < maskedFloatList.size(); i++) {
+                                pstmt.setFloat(1, maskedFloatList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
                             }
@@ -175,6 +162,8 @@ public class DatabaseProcessor {
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
+
+                        updateLookupTables(isPrimaryKey, tableName, columnName, customFloatList.getInternalList(), maskedFloatList.getInternalList());
 
                         break;
                     case Types.BOOLEAN:
@@ -187,12 +176,13 @@ public class DatabaseProcessor {
                                 .filter(Objects::nonNull)
                                 .toList();
                         CustomBooleanList customBooleanList = new CustomBooleanList(booleanList);
+                        CustomBooleanList maskedBooleanList =  strategy.mask(customBooleanList);
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
                                 "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
 
-                            for (int i = 0; i < customBooleanList.size(); i++) {
-                                pstmt.setBoolean(1, customBooleanList.get(i)); // value
+                            for (int i = 0; i < maskedBooleanList.size(); i++) {
+                                pstmt.setBoolean(1, maskedBooleanList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
                             }
@@ -200,6 +190,8 @@ public class DatabaseProcessor {
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
+
+                        updateLookupTables(isPrimaryKey, tableName, columnName, customBooleanList.getInternalList(), maskedBooleanList.getInternalList());
 
                         break;
                     case Types.DATE:
@@ -215,12 +207,13 @@ public class DatabaseProcessor {
                                 .filter(Objects::nonNull)
                                 .toList();
                         CustomDateList customDateList = new CustomDateList(dateList);
+                        CustomDateList maskedDateList =  strategy.mask(customDateList);
 
                         try (PreparedStatement pstmt = conn.prepareStatement(
                                 "UPDATE " + table.getTableName() + " SET " + column.getColumnName() + " = ? WHERE row_num = ?")) {
 
-                            for (int i = 0; i < customDateList.size(); i++) {
-                                pstmt.setDate(1, customDateList.get(i)); // value
+                            for (int i = 0; i < maskedDateList.size(); i++) {
+                                pstmt.setDate(1, maskedDateList.get(i)); // value
                                 pstmt.setInt(2, i + 1); // row_num is list index + 1
                                 pstmt.executeUpdate();
                             }
@@ -229,21 +222,9 @@ public class DatabaseProcessor {
                             e.printStackTrace();
                         }
 
+                        updateLookupTables(isPrimaryKey, tableName, columnName, customDateList.getInternalList(), maskedDateList.getInternalList());
+
                         break;
-//                    case Types.TIMESTAMP:
-//                        List<Timestamp> timestampList = values.getList().stream()
-//                                .map(obj -> {
-//                                    try {
-//                                        if (obj instanceof Timestamp) return (Timestamp) obj;
-//                                        if (obj instanceof String) return Timestamp.valueOf((String) obj);
-//                                        if (obj instanceof Number) return new Timestamp(((Number) obj).longValue());
-//                                    } catch (Exception ignored) {}
-//                                    return null;
-//                                })
-//                                .filter(Objects::nonNull)
-//                                .toList();
-//
-//                        break;
                     case Types.VARCHAR:
                     case Types.CHAR:
                     case Types.LONGVARCHAR:
@@ -269,6 +250,9 @@ public class DatabaseProcessor {
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
+
+                        updateLookupTables(isPrimaryKey, tableName, columnName, customStringList.getInternalList(), maskedStringList.getInternalList());
+
                         break;
                 }
             }
@@ -318,6 +302,11 @@ public class DatabaseProcessor {
         System.out.println(createQuery);
         stmt.executeUpdate(createQuery.toString());
         System.out.println("Created Table: " + table.getTableName());
+    }
+
+    private void updateLookupTables(boolean isPrimaryKey, String tableName, String columnName, List<?>original, List<?> updated){
+        if (!isPrimaryKey) return;
+        LookupSubstitutionStrategy.updateLookupTable(tableName, columnName, original, updated);
     }
 
     private ListObjectWithDataType fetchColumnValues(String tableName, String columnName) {

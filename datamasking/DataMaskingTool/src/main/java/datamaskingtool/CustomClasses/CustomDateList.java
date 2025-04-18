@@ -126,4 +126,8 @@ public class CustomDateList implements List<Date> {
     public List<Date> subList(int fromIndex, int toIndex) {
         return internalList.subList(fromIndex, toIndex);
     }
+
+    public List<Date> getInternalList(){
+        return internalList;
+    }
 }

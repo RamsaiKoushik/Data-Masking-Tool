@@ -81,7 +81,7 @@
                     <auto_increment>NO</auto_increment>
                     <column_size>30</column_size>
                     <default_value />
-                    <masking_strategy>Redaction</masking_strategy>
+                    <masking_strategy>PartialRedaction</masking_strategy>
                 </column>
                 <column>
                     <column_name>sex</column_name>
@@ -202,7 +202,7 @@
                     <auto_increment>NO</auto_increment>
                     <column_size>9</column_size>
                     <default_value />
-                    <masking_strategy>no_masking</masking_strategy>
+                    <masking_strategy>Encryption</masking_strategy>
                 </column>
                 <column>
                     <column_name>bdate</column_name>
