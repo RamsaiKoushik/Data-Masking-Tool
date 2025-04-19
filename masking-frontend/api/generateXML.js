@@ -6,9 +6,18 @@ const generateXML = (schema, maskingConfig, user_dbUrl, user_username, user_pass
     database.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
     database.setAttribute("xsi:noNamespaceSchemaLocation", "config.xsd");
   
-    const dbName = xmlDoc.createElement("db_name");
-    dbName.textContent = user_dbUrl; 
-    database.appendChild(dbName);
+    // Split db_name into db_url and db_name
+    const dbUrlParts = user_dbUrl.split("/");
+    const dbName = dbUrlParts.pop(); // Extract the database name (e.g., "companydb")
+    const dbUrl = dbUrlParts.join("/") + "/"; // Reconstruct the URL without the database name
+
+    const dbUrlElement = xmlDoc.createElement("db_url");
+    dbUrlElement.textContent = dbUrl;
+    database.appendChild(dbUrlElement);
+
+    const dbNameElement = xmlDoc.createElement("db_name");
+    dbNameElement.textContent = dbName;
+    database.appendChild(dbNameElement);
   
     const username = xmlDoc.createElement("username");
     username.textContent = user_username; 

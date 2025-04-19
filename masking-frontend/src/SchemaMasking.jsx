@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import generateXML from "../api/generateXML";
-
-const MaskingStrategies = [
-  { value: "no_masking", label: "No Masking" },
-  { value: "shuffling", label: "Shuffling" },
-  { value: "redaction", label: "Full Redaction" },
-  { value: "partial_redaction", label: "Partial Redaction" },
-  { value: "encryption", label: "Encryption" },
-  { value: "lookup_sub", label: "Lookup Substitution" },
-];
+import { MaskingStrategies } from "../api/maskingStrategies";
 
 function SchemaMasking() {
   const navigate = useNavigate();
+  
 
   const { state } = useLocation();
   const schema = state?.schema;

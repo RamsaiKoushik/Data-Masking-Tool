@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import generateXML from "../api/generateXML";
-
-const MaskingStrategies = [
-  { value: "no_masking", label: "No Masking" },
-  { value: "shuffling", label: "Shuffling" },
-  { value: "redaction", label: "Full Redaction" },
-  { value: "partial_redaction", label: "Partial Redaction" },
-  { value: "encryption", label: "Encryption" },
-  { value: "lookup_sub", label: "Lookup Substitution" },
-];
+import { MaskingStrategies } from "../api/maskingStrategies";
 
 function EditConfigPage() {
   const [configData, setConfigData] = useState(null);
@@ -23,7 +15,8 @@ function EditConfigPage() {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
         const database = xmlDoc.querySelector("database");
-        const db_name = database.querySelector("db_name").textContent;
+        const db_name = database.querySelector("db_url").textContent + database.querySelector("db_name").textContent
+        console.log(db_name);
         const username = database.querySelector("username").textContent;
         const password = database.querySelector("password").textContent;
 
