@@ -15,13 +15,13 @@ public class DatabaseProcessor {
     private String NEW_DB_NAME;
     private String OLD_DB_NAME;
 
-    public DatabaseProcessor(Database database, String DB_URL, String NEW_DB_NAME){
+    public DatabaseProcessor(Database database){
         this.database = database;
-        this.DB_URL = DB_URL;
+        this.DB_URL = database.getDb_url();
         this.USER = database.getUsername();
         this.PASSWORD = database.getPassword();
         this.OLD_DB_NAME = database.getDbName();
-        this.NEW_DB_NAME = NEW_DB_NAME;
+        this.NEW_DB_NAME = database.getDbName()+"new";
     }
 
     public void ReplicateDatabase() {
@@ -123,20 +123,7 @@ public class DatabaseProcessor {
                                 .toList();
                         CustomIntegerList customIntegerList = new CustomIntegerList(integerList);
                         CustomIntegerList maskedIntegerList =  strategy.mask(customIntegerList);
-
-                        try (PreparedStatement pstmt = conn.prepareStatement(
-                                     "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
-
-                            for (int i = 0; i < maskedIntegerList.size(); i++) {
-                                pstmt.setInt(1, maskedIntegerList.get(i)); // value
-                                pstmt.setInt(2, i + 1); // row_num is list index + 1
-                                pstmt.executeUpdate();
-                            }
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
+                        writeToDatabase(conn, maskedIntegerList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customIntegerList.getInternalList(), maskedIntegerList.getInternalList());
 
                         break;
@@ -149,20 +136,7 @@ public class DatabaseProcessor {
                                 .toList();
                         CustomFloatList customFloatList = new CustomFloatList(floatList);
                         CustomFloatList maskedFloatList =  strategy.mask(customFloatList);
-
-                        try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
-
-                            for (int i = 0; i < maskedFloatList.size(); i++) {
-                                pstmt.setFloat(1, maskedFloatList.get(i)); // value
-                                pstmt.setInt(2, i + 1); // row_num is list index + 1
-                                pstmt.executeUpdate();
-                            }
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
+                        writeToDatabase(conn, maskedFloatList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customFloatList.getInternalList(), maskedFloatList.getInternalList());
 
                         break;
@@ -177,20 +151,7 @@ public class DatabaseProcessor {
                                 .toList();
                         CustomBooleanList customBooleanList = new CustomBooleanList(booleanList);
                         CustomBooleanList maskedBooleanList =  strategy.mask(customBooleanList);
-
-                        try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table + " SET " + column + " = ? WHERE row_num = ?")) {
-
-                            for (int i = 0; i < maskedBooleanList.size(); i++) {
-                                pstmt.setBoolean(1, maskedBooleanList.get(i)); // value
-                                pstmt.setInt(2, i + 1); // row_num is list index + 1
-                                pstmt.executeUpdate();
-                            }
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
+                        writeToDatabase(conn, maskedBooleanList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customBooleanList.getInternalList(), maskedBooleanList.getInternalList());
 
                         break;
@@ -209,21 +170,8 @@ public class DatabaseProcessor {
                         CustomDateList customDateList = new CustomDateList(dateList);
                         CustomDateList maskedDateList =  strategy.mask(customDateList);
 
-                        try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table.getTableName() + " SET " + column.getColumnName() + " = ? WHERE row_num = ?")) {
-
-                            for (int i = 0; i < maskedDateList.size(); i++) {
-                                pstmt.setDate(1, maskedDateList.get(i)); // value
-                                pstmt.setInt(2, i + 1); // row_num is list index + 1
-                                pstmt.executeUpdate();
-                            }
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
+                        writeToDatabase(conn, maskedDateList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customDateList.getInternalList(), maskedDateList.getInternalList());
-
                         break;
                     case Types.VARCHAR:
                     case Types.CHAR:
@@ -234,25 +182,12 @@ public class DatabaseProcessor {
                         CustomStringList customStringList = new CustomStringList(stringList);
                         CustomStringList maskedStringList = strategy.mask(customStringList);
 
-                        for(String val: maskedStringList){
-                            System.out.print(val + ", ");
-                        }
-                        System.out.println("\n");
-
-                        try (PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE " + table.getTableName() + " SET " + column.getColumnName() + " = ? WHERE row_num = ?")) {
-                            for (int i = 0; i < maskedStringList.size(); i++) {
-                                pstmt.setString(1, maskedStringList.get(i)); // value
-                                pstmt.setInt(2, i + 1); // row_num is list index + 1
-                                pstmt.executeUpdate();
-                            }
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
+//                        for(String val: maskedStringList){
+//                            System.out.print(val + ", ");
+//                        }
+//                        System.out.println("\n");
+                        writeToDatabase(conn, maskedStringList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customStringList.getInternalList(), maskedStringList.getInternalList());
-
                         break;
                 }
             }
@@ -260,8 +195,6 @@ public class DatabaseProcessor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return ;
     }
 
     private Table getTableByName(Database database, String tableName) {
@@ -282,26 +215,19 @@ public class DatabaseProcessor {
         return null;
     }
 
-    private void createNewTable(Statement stmt, Table table) throws SQLException {
-        StringBuilder createQuery = new StringBuilder("CREATE TABLE " + table.getTableName() + " (");
-
-        List<String> columnDefinitions = new ArrayList<>();
-        for (Column column : table.getColumns()) {
-            String dataType = column.getDataType();
-            String size = column.getColumn_size();
-
-            // Append size only if the data type is CHAR or VARCHAR
-            if (dataType.equalsIgnoreCase("CHAR") || dataType.equalsIgnoreCase("VARCHAR")) {
-                columnDefinitions.add(column.getColumnName() + " " + dataType + "(" + size + ")");
-            } else {
-                columnDefinitions.add(column.getColumnName() + " " + dataType);
+    private void writeToDatabase(Connection conn, CustomList maskedList, String tableName, String columnName){
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "UPDATE " + tableName + " SET " + columnName + " = ? WHERE row_num = ?")) {
+            List<?> list = maskedList.getInternalList();
+            for (int i = 0; i < list.size(); i++) {
+                pstmt.setObject(1, list.get(i)); // value
+                pstmt.setInt(2, i + 1); // row_num is list index + 1
+                pstmt.executeUpdate();
             }
-        }
 
-        createQuery.append(String.join(", ", columnDefinitions)).append(");");
-        System.out.println(createQuery);
-        stmt.executeUpdate(createQuery.toString());
-        System.out.println("Created Table: " + table.getTableName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateLookupTables(boolean isPrimaryKey, String tableName, String columnName, List<?>original, List<?> updated){
@@ -320,32 +246,7 @@ public class DatabaseProcessor {
             int columnType = metaData.getColumnType(1);
 
             while (rs.next()) {
-                switch (columnType) {
-                    case Types.INTEGER:
-                        values.add(rs.getInt(columnName));
-                        break;
-                    case Types.FLOAT:
-                    case Types.DOUBLE:
-                    case Types.REAL:
-                        values.add(rs.getDouble(columnName)); // Use double to cover all float types
-                        break;
-                    case Types.BOOLEAN:
-                        values.add(rs.getBoolean(columnName));
-                        break;
-                    case Types.DATE:
-                        values.add(rs.getDate(columnName));
-                        break;
-//                    case Types.TIMESTAMP:
-//                        values.add(rs.getTimestamp(columnName));
-//                        break;
-                    case Types.VARCHAR:
-                    case Types.CHAR:
-                    case Types.LONGVARCHAR:
-                        values.add(rs.getString(columnName));
-                        break;
-                    default:
-                        values.add(rs.getObject(columnName)); // Fallback for unknown types
-                }
+                values.add(rs.getObject(columnName));
             }
 
             System.out.println("Values for " + tableName + "." + columnName + ": " + values);

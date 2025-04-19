@@ -3,7 +3,7 @@ package datamaskingtool.CustomClasses;
 import java.util.*;
 import java.sql.Date;
 
-public class CustomDateList implements List<Date> {
+public class CustomDateList implements List<Date>, CustomList{
     private List<Date> internalList = new ArrayList<>();
 
     public CustomDateList(List<Date> list){
@@ -127,6 +127,7 @@ public class CustomDateList implements List<Date> {
         return internalList.subList(fromIndex, toIndex);
     }
 
+    @Override
     public List<Date> getInternalList(){
         return internalList;
     }

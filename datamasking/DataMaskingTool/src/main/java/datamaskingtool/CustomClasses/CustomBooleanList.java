@@ -2,7 +2,7 @@ package datamaskingtool.CustomClasses;
 
 import java.util.*;
 
-public class CustomBooleanList implements List<Boolean> {
+public class CustomBooleanList implements List<Boolean>, CustomList{
     private List<Boolean> internalList = new ArrayList<>();
 
     public CustomBooleanList(List<Boolean> list){
@@ -126,6 +126,7 @@ public class CustomBooleanList implements List<Boolean> {
         return internalList.subList(fromIndex, toIndex);
     }
 
+    @Override
     public List<Boolean> getInternalList(){
         return internalList;
     }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import java.util.*;
 
-public class CustomFloatList implements List<Float> {
+public class CustomFloatList implements List<Float>, CustomList {
     private List<Float> internalList = new ArrayList<>();
 
     public CustomFloatList(List<Float> list){
@@ -128,6 +128,7 @@ public class CustomFloatList implements List<Float> {
         return internalList.subList(fromIndex, toIndex);
     }
 
+    @Override
     public List<Float> getInternalList(){
         return internalList;
     }

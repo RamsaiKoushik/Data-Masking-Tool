@@ -4,7 +4,7 @@ import java.util.List;
 
 import java.util.*;
 
-public class CustomStringList implements List<String> {
+public class CustomStringList implements List<String>, CustomList {
     private List<String> internalList = new ArrayList<>();
 
     public CustomStringList(List<String> list){
@@ -128,6 +128,7 @@ public class CustomStringList implements List<String> {
         return internalList.subList(fromIndex, toIndex);
     }
 
+    @Override
     public List<String> getInternalList(){
         return internalList;
     }

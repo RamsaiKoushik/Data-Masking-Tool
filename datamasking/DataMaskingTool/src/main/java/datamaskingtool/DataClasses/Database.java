@@ -6,6 +6,7 @@ import java.util.List;
 @XmlRootElement(name = "database")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Database {
+    private String db_url;
     private String db_name;
     private String username;
     private String password;
@@ -26,4 +27,7 @@ public class Database {
 
     public List<Table> getTables() { return tables; }
     public void setTables(List<Table> tables) { this.tables = tables; }
+
+    public String getDb_url(){return db_url;}
+    public void setDb_url(String db_url){this.db_url = db_url; }
 }

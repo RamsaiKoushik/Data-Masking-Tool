@@ -1,5 +1,6 @@
 <database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="config.xsd">
+    <db_url>jdbc:mysql://localhost:3306/</db_url>
     <db_name>companydb</db_name>
     <username>root</username>
     <password>Siddhu*kothari04</password>
