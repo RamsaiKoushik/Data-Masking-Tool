@@ -5,16 +5,25 @@ import { MaskingStrategies } from "../api/maskingStrategies";
 
 function SchemaMasking() {
   const navigate = useNavigate();
-  
-
   const { state } = useLocation();
   const schema = state?.schema;
 
+
+  const isPrimaryKey = (table, columnName) =>
+    table.primary_keys.includes(columnName);
+
+  const isForeignKey = (table, columnName) =>
+    table.foreign_keys.some((fk) => fk.column_name === columnName);
+
+  // Initialize maskingConfig with default strategies
   const [maskingConfig, setMaskingConfig] = useState(
     schema
       ? schema.reduce((acc, table) => {
           acc[table.table_name] = table.columns.reduce((colAcc, col) => {
-            colAcc[col.column_name] = "no_masking"; // Default masking strategy
+            // Use isForeignKey to check if the column is a foreign key
+            colAcc[col.column_name] = isForeignKey(table, col.column_name)
+              ? "LookupSubstitution"
+              : "no_masking"; // Default masking strategy
             return colAcc;
           }, {});
           return acc;
@@ -31,12 +40,6 @@ function SchemaMasking() {
       },
     }));
   };
-
-  const isPrimaryKey = (table, columnName) =>
-    table.primary_keys.includes(columnName);
-
-  const isForeignKey = (table, columnName) =>
-    table.foreign_keys.some((fk) => fk.column_name === columnName);
 
   const handleSubmit = () => {
     generateXML(schema, maskingConfig, state?.dbUrl, state?.username, state?.password);
@@ -78,22 +81,30 @@ function SchemaMasking() {
                 )}
                 :
                 <select
-                  onChange={(e) =>
-                    handleStrategyChange(
-                      table.table_name,
-                      col.column_name,
-                      e.target.value
-                    )
-                  }
-                  value={maskingConfig[table.table_name][col.column_name]} // Default value
-                  style={{ marginLeft: "10px" }}
-                >
-                  {MaskingStrategies.map((strategy) => (
-                    <option key={strategy.value} value={strategy.value}>
-                      {strategy.label}
-                    </option>
-                  ))}
-                </select>
+                onChange={(e) =>
+                  handleStrategyChange(
+                    table.table_name,
+                    col.column_name,
+                    e.target.value
+                  )
+                }
+                value={maskingConfig[table.table_name][col.column_name]} // Default value
+                style={{ marginLeft: "10px" }}
+              >
+                {isForeignKey(table, col.column_name)
+                  ? // Only show LookupSubstitution for foreign keys
+                    MaskingStrategies.filter((strategy) => strategy.value === "LookupSubstitution").map((strategy) => (
+                      <option key={strategy.value} value={strategy.value}>
+                        {strategy.label}
+                      </option>
+                    ))
+                  : // Show all strategies for non-foreign keys
+                    MaskingStrategies.map((strategy) => (
+                      <option key={strategy.value} value={strategy.value}>
+                        {strategy.label}
+                      </option>
+                    ))}
+              </select>
               </label>
             </div>
           ))}
@@ -108,11 +119,9 @@ function SchemaMasking() {
         }}
       >
         <button onClick={handleSubmit} style={{ padding: "10px" }}>
-          Submit Configuration
+          Generate Config File
         </button>
-        <button onClick={() => navigate("/editConfig")} style={{ marginLeft: "10px", padding: "10px" }}>
-          Choose Tables to Mask
-        </button>
+        
       </div>
     </div>
   );

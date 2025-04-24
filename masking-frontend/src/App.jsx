@@ -3,6 +3,7 @@ import GetSchema from "./GetSchema";
 import SchemaMasking from "./SchemaMasking";
 import HomePage from "./HomePage";
 import EditConfigPage from "./EditConfigPage";
+import PerformMask from "./PerformMask";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/schema" element={<GetSchema />} />
         <Route path="/maskSchema" element={<SchemaMasking />} />
         <Route path="/editConfig" element={<EditConfigPage />} />
+        <Route path="/performMask" element={<PerformMask />} />
       </Routes>
     </Router>
   );

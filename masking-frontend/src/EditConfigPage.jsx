@@ -3,6 +3,13 @@ import generateXML from "../api/generateXML";
 import { MaskingStrategies } from "../api/maskingStrategies";
 
 function EditConfigPage() {
+  
+  const isPrimaryKey = (table, columnName) =>
+    table.primary_keys.includes(columnName);
+
+  const isForeignKey = (table, columnName) =>
+    table.foreign_keys.some((fk) => fk.column_name === columnName);
+
   const [configData, setConfigData] = useState(null);
   const [isFileUploaded, setIsFileUploaded] = useState(false);
 
@@ -168,9 +175,20 @@ function EditConfigPage() {
           </h3>
           <h4>Columns:</h4>
           {table.columns.map((col) => (
-            <div key={col.column_name} style={{ marginLeft: "20px" }}>
+            <div key={col.column_name} style={{ marginBottom: "10px", marginLeft: "20px" }}>
               <label>
-                Column: <strong>{col.column_name}</strong> - Masking Strategy:
+                Column: <strong>{col.column_name}</strong>
+                {isPrimaryKey(table, col.column_name) && (
+                  <span style={{ color: "green", marginLeft: "5px" }}>
+                    (Primary Key)
+                  </span>
+                )}
+                {isForeignKey(table, col.column_name) && (
+                  <span style={{ color: "blue", marginLeft: "5px" }}>
+                    (Foreign Key)
+                  </span>
+                )}
+                - Masking Strategy:
                 <select
                   value={col.masking_strategy}
                   onChange={(e) =>
@@ -182,11 +200,21 @@ function EditConfigPage() {
                   }
                   style={{ marginLeft: "10px" }}
                 >
-                  {MaskingStrategies.map((strategy) => (
-                    <option key={strategy.value} value={strategy.value}>
-                      {strategy.label}
-                    </option>
-                  ))}
+                  {isForeignKey(table, col.column_name)
+                    ? // Only show LookupSubstitution for foreign keys
+                      MaskingStrategies.filter(
+                        (strategy) => strategy.value === "LookupSubstitution"
+                      ).map((strategy) => (
+                        <option key={strategy.value} value={strategy.value}>
+                          {strategy.label}
+                        </option>
+                      ))
+                    : // Show all strategies for non-foreign keys
+                      MaskingStrategies.map((strategy) => (
+                        <option key={strategy.value} value={strategy.value}>
+                          {strategy.label}
+                        </option>
+                      ))}
                 </select>
               </label>
             </div>
