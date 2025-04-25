@@ -1,54 +1,49 @@
 import React, { useState } from "react";
+import {generateDump} from "../api/generateDump";
+import { directWriteToDB } from "../api/directWriteToDB";
 
 export default function PerformMask() {
-  const [schemaFile, setSchemaFile] = useState(null);
+  const [newDbUrl, setNewDbUrl] = useState("");
+  const [dbName, setDbName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [xmlContent, setXmlContent] = useState("");
   const [selectedOption, setSelectedOption] = useState("Dump");
-  const [isDumpReady, setIsDumpReady] = useState(false);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSchemaFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target.result; 
+        setXmlContent(content); // Store the XML content in state
+      };
+      reader.readAsText(file); 
     }
   };
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
-    if (event.target.value === "Dump") {
-      setIsDumpReady(false); // Reset dump readiness when switching options
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!schemaFile) {
-      alert("Please upload a schema file.");
-      return;
-    }
-    if (!selectedOption) {
-      alert("Please select an option.");
-      return;
-    }
-
-    if (selectedOption === "Dump") {
-      // Simulate dump file generation
-      setTimeout(() => {
-        alert("SQL Dump file is ready for download.");
-        setIsDumpReady(true); // Mark the dump as ready
-      }, 2000); // Simulate processing delay
-    } else {
-      alert("Data will be written to the database directly.");
-      // Add logic for writing to the database
-    }
   };
 
   const handleDownloadDump = () => {
-    // Simulate dump file download
-    const dumpContent = "This is a simulated SQL dump file.";
-    const blob = new Blob([dumpContent], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "dump.sql";
-    link.click();
+    if (!xmlContent) {
+      alert("Please upload a schema file first.");
+      return;
+    }
+    generateDump(xmlContent)
+  };
+
+  const handleDirectWrite = () => {
+    if(!xmlContent) {
+      alert("Please upload a schema file first.");
+      return;
+    }
+    if (!newDbUrl || !dbName || !username || !password) { 
+      alert("Please fill in all database connection fields.");
+      return;
+    }
+    directWriteToDB(newDbUrl, dbName, username, password, xmlContent)
   };
 
   return (
@@ -92,21 +87,68 @@ export default function PerformMask() {
       
       
       {selectedOption === "Dump" && (
-        <button
-          onClick={handleDownloadDump}
-          style={{
-            padding: "5px 5px",
-            fontSize: "12px",
-            cursor: "pointer",
-          }}
-        >
-          Generate SQL Dump File
-        </button>
-      )}
+            <button onClick={handleDownloadDump}
+                    style={{
+                      padding: "5px 5px",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Generate SQL Dump File
+                  </button>
+                )}
 
-      {selectedOption === "Direct" && (
-        <div></div>
-      )}
+                {selectedOption === "Direct" && (
+            <div
+              style={{
+                maxWidth: "600px",
+                padding: "20px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center", // Center horizontally
+                justifyContent: "center", // Center vertically
+              }}
+            >
+              <input
+                type="text"
+                placeholder="New Database URL"
+                value={newDbUrl}
+                onChange={(e) => setNewDbUrl(e.target.value)}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+              />
+              <input
+                type="text"
+                placeholder="New Database Name"
+                value={dbName}
+                onChange={(e) => setDbName(e.target.value)}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+              />
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+              />
+              <button
+                onClick={() => {handleDirectWrite(newDbUrl, dbName, username, password)}}
+                style={{
+                  padding: "10px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                }}
+              >
+                Fetch Schema
+              </button>
+            </div>
+          )}
     </div>
   );
 }
