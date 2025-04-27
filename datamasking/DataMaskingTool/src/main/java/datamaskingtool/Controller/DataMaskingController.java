@@ -29,7 +29,7 @@ import java.util.*;
 @RestController
 public class DataMaskingController {
 
-    @GetMapping(value = "/ProcessDataDump", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/ProcessDataDump", consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<Map<String, String>> getDataDump(@RequestBody String xmlContent) {
         Database database = XMLParser.parse_xml(xmlContent);
         String db_name_new = database.getDbName()+"new";
@@ -44,9 +44,9 @@ public class DataMaskingController {
         databaseProcessor.processDatabase(columns);
         DatabaseDumper.dumpDatabase("localhost", "3306", database.getUsername(), database.getPassword(), db_name_new, dumpFilename);
 
-        String downloadUrl = "http://localhost:8080/download/" + dumpFilename;
+//        String downloadUrl = "http://localhost:8080/download/" + dumpFilename;
         Map<String, String> response = new HashMap<>();
-        response.put("downloadUrl", downloadUrl);
+        response.put("filename", dumpFilename);
 
         return ResponseEntity.ok(response);
     }

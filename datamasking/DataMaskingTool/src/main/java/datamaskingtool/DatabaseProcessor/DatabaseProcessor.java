@@ -106,15 +106,8 @@ public class DatabaseProcessor {
 
             for (String table: tables){
 
-                // 3. Add row_num column if not exists
-                ResultSet colRs = stmt.executeQuery(
-                        "SHOW COLUMNS FROM " + NEW_DB_NAME + "." + table + " LIKE 'row_num'"
-                );
-                if (!colRs.next()) {
-                    String addRowNumColumn = "ALTER TABLE " + NEW_DB_NAME + "." + table + " ADD COLUMN row_num INT";
-                    System.out.println(addRowNumColumn);
-                    stmt.executeUpdate(addRowNumColumn);
-                }
+                String addRowNumColumn = "ALTER TABLE " + NEW_DB_NAME + "." + table + " ADD COLUMN row_num INT";
+                stmt.executeUpdate(addRowNumColumn);
 
                 Table table_obj = getTableByName(database, table);
                 assert table_obj != null;
@@ -197,12 +190,9 @@ public class DatabaseProcessor {
                 List<String> list = table.getReferencedColumn(columnName);
                 boolean isPrimaryKey = table.getPrimaryKeys().contains(columnName);
 
-                // Step 4: Retrieve and output the masking strategy
                 String maskingStrategy = column.getMaskingStrategy();
                 System.out.println("Column: " + columnName + " | Masking Strategy: " + maskingStrategy);
                 MaskingStrategy strategy = msm.returnMaskingStrategy(maskingStrategy, list.get(0), list.get(1));
-
-                // Step 5: Query the original database for column values
                 ListObjectWithDataType values = fetchColumnValues(tableName, columnName);
                 int columnType = values.getColumnType();
 
@@ -274,11 +264,6 @@ public class DatabaseProcessor {
                                 .toList();
                         CustomStringList customStringList = new CustomStringList(stringList);
                         CustomStringList maskedStringList = strategy.mask(customStringList);
-
-//                        for(String val: maskedStringList){
-//                            System.out.print(val + ", ");
-//                        }
-//                        System.out.println("\n");
                         writeToDatabase(conn, maskedStringList, tableName, columnName);
                         updateLookupTables(isPrimaryKey, tableName, columnName, customStringList.getInternalList(), maskedStringList.getInternalList());
                         break;
@@ -332,6 +317,7 @@ public class DatabaseProcessor {
 
     private ListObjectWithDataType fetchColumnValues(String tableName, String columnName) {
         String query = "SELECT " + columnName + " FROM " + tableName + " ORDER BY row_num" ;
+        System.out.println(query);
         try (Connection conn = DriverManager.getConnection(NEW_DB_URL + NEW_DB_NAME, NEW_USER, NEW_PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

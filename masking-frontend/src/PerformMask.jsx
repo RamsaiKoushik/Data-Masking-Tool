@@ -1,14 +1,30 @@
 import React, { useState } from "react";
 import {generateDump} from "../api/generateDump";
 import { directWriteToDB } from "../api/directWriteToDB";
+import { generateDumpFromKey } from "../api/generateDumpFromKey";
 
 export default function PerformMask() {
+  
+  const [selectedOption, setSelectedOption] = useState("Dump");
+
   const [newDbUrl, setNewDbUrl] = useState("");
   const [dbName, setDbName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  
   const [xmlContent, setXmlContent] = useState("");
-  const [selectedOption, setSelectedOption] = useState("Dump");
+  
+  const [backendUrl, setBackendUrl] = useState("");
+
+  const [dumpKey, setDumpKey] = useState("")
+
+  const downloadFile = (data) => {
+    const blob = new Blob([data], { type: 'text/sql' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'dump.sql'; 
+    link.click();
+  }
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -26,14 +42,24 @@ export default function PerformMask() {
     setSelectedOption(event.target.value);
   };
 
-  const handleDownloadDump = () => {
+  
+  const handleDownloadDump = async () => {
     if (!xmlContent) {
       alert("Please upload a schema file first.");
       return;
     }
-    generateDump(xmlContent)
+    setBackendUrl(generateDump(xmlContent))
   };
 
+  
+  const handleDownloadDumpFromKey = async () => {
+    if(dumpKey == ""){
+      alert("Please enter dump key.");
+    } 
+    downloadFile(await generateDumpFromKey(dumpKey))
+  }
+
+  
   const handleDirectWrite = () => {
     if(!xmlContent) {
       alert("Please upload a schema file first.");
@@ -43,8 +69,12 @@ export default function PerformMask() {
       alert("Please fill in all database connection fields.");
       return;
     }
-    directWriteToDB(newDbUrl, dbName, username, password, xmlContent)
+    if(directWriteToDB(newDbUrl, dbName, username, password, xmlContent) == false){
+      alert("Did not work.")
+    }
   };
+
+  
 
   return (
     <div style={{ margin: "20px" }}>
@@ -62,6 +92,7 @@ export default function PerformMask() {
       </div>
       <div style={{ marginBottom: "20px" }}>
         <h3>Select an Option:</h3>
+        
         <label>
           <input
             type="radio"
@@ -71,8 +102,22 @@ export default function PerformMask() {
             style={{ marginRight: "10px" }}
           />
           Generate SQL Dump File
+
         </label>
         <br />
+        
+        <label>
+          <input
+            type="radio"
+            value="DumpFromKey"
+            checked={selectedOption === "DumpFromKey"}
+            onChange={handleOptionChange}
+            style={{ marginRight: "10px" }}
+          />
+          Generate SQL Dump File from existing Key
+        </label>
+        <br />
+
         <label>
           <input
             type="radio"
@@ -94,11 +139,37 @@ export default function PerformMask() {
                       cursor: "pointer",
                     }}
                   >
-                    Generate SQL Dump File
+                    Generate SQL Dump File Key
                   </button>
+                  
                 )}
+      {selectedOption === "Dump" && backendUrl != "" && <div style={{"marginTop": "10px"}}>Your dump key is <b>{backendUrl}</b></div>}
+  
+       {selectedOption === "DumpFromKey" && 
+        <div>
+          
+          <input
+                type="text"
+                placeholder="Dump File Key"
+                value={dumpKey}
+                onChange={(e) => setDumpKey(e.target.value)}
+                style={{ width: "30%", marginBottom: "10px", padding: "8px" }}
+              />
 
-                {selectedOption === "Direct" && (
+            <button
+                onClick={handleDownloadDumpFromKey}
+                style={{
+                  padding: "10px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                }}
+              >   
+              Get Dump File
+              </button>
+
+        </div>}         
+      
+      {selectedOption === "Direct" && (
             <div
               style={{
                 maxWidth: "600px",
