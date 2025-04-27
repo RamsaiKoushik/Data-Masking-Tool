@@ -116,7 +116,9 @@ public class DatabaseProcessor {
                 int columnType = values.getColumnType();
 
                 switch (columnType) {
-                    case Types.INTEGER:
+                    case Types.TINYINT:
+                    case Types.SMALLINT:
+                    case Types.INTEGER :
                         List<Integer> integerList = values.getList().stream()
                                 .filter(obj -> obj instanceof Number) // Ensure it's a number
                                 .map(obj -> ((Number) obj).intValue()) // Convert to Integer

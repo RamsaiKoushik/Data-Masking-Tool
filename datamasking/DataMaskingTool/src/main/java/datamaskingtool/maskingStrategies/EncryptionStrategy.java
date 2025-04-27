@@ -8,7 +8,7 @@ import java.security.SecureRandom;
 public class EncryptionStrategy extends MaskingStrategy {
 
     private final SecureRandom secureRandom = new SecureRandom();
-    private final Integer MOD = 100000000;
+    private final Integer MOD = 10000;
 
     // FPE parameters
 //    private final FPEString fpeEncryptor;
@@ -72,6 +72,8 @@ public class EncryptionStrategy extends MaskingStrategy {
 
     @Override
     public CustomIntegerList mask(CustomIntegerList values) {
+
+        System.out.println("I'm at the encrypytion step");
         if (values == null || values.isEmpty()) {
             return values;
         }
@@ -136,7 +138,8 @@ public class EncryptionStrategy extends MaskingStrategy {
     }
 
     private int encryptInteger(int value) {
-        return (value % MOD * secureRandom.nextInt(1_000_000) % MOD) % MOD;
+        int newValue = (value % MOD * secureRandom.nextInt(1_000) % MOD) % MOD;
+        return newValue;
     }
 
     private Date encryptDate(Date date) {
