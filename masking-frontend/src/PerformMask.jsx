@@ -216,7 +216,7 @@ export default function PerformMask() {
                   cursor: "pointer",
                 }}
               >
-                Fetch Schema
+                Write to DB
               </button>
             </div>
           )}
