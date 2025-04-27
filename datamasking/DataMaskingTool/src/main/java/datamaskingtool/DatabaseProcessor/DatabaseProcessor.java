@@ -1,7 +1,11 @@
 package datamaskingtool.DatabaseProcessor;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
 import java.sql.Date;
+import java.util.stream.Collectors;
+
 import datamaskingtool.CustomClasses.*;
 import datamaskingtool.DataClasses.*;
 import datamaskingtool.maskingStrategies.LookupSubstitutionStrategy;
@@ -12,28 +16,65 @@ public class DatabaseProcessor {
     private String DB_URL;
     private String USER;
     private String PASSWORD;
-    private String NEW_DB_NAME;
     private String OLD_DB_NAME;
 
-    public DatabaseProcessor(Database database){
+    private String NEW_DB_URL;
+    private String NEW_USER;
+    private String NEW_PASSWORD;
+    private String NEW_DB_NAME;
+
+    public DatabaseProcessor(Database database, String db_new){
         this.database = database;
         this.DB_URL = database.getDb_url();
         this.USER = database.getUsername();
         this.PASSWORD = database.getPassword();
         this.OLD_DB_NAME = database.getDbName();
-        this.NEW_DB_NAME = database.getDbName()+"new";
+        this.NEW_DB_NAME = db_new;
+        this.NEW_DB_URL = DB_URL;
+        this.NEW_USER = USER;
+        this.NEW_PASSWORD = PASSWORD;
     }
 
-    public void ReplicateDatabase() {
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement stmt = conn.createStatement()) {
+    public DatabaseProcessor(Database database, String newDbURL, String newDatabase, String newUser, String newPassword){
+        this.database = database;
+        this.DB_URL = database.getDb_url();
+        this.USER = database.getUsername();
+        this.PASSWORD = database.getPassword();
+        this.OLD_DB_NAME = database.getDbName();
+        this.NEW_DB_NAME = newDatabase;
+        this.NEW_DB_URL = newDbURL;
+        this.NEW_USER = newUser;
+        this.NEW_PASSWORD = newPassword;
+    }
+
+    public void generateDump() throws URISyntaxException {
+        URI uri = new URI(DB_URL.substring(5));
+        String host = uri.getHost();
+        int port = uri.getPort();
+        DatabaseDumper.dumpDatabase(host, String.valueOf(port), USER, PASSWORD, OLD_DB_NAME, OLD_DB_NAME+".sql");
+    }
+
+    public void populateDatabase() throws URISyntaxException {
+        URI uri = new URI(NEW_DB_URL.substring(5));
+        String host = uri.getHost();
+        int port = uri.getPort();
+        DatabaseDumper.restoreDatabase(host, String.valueOf(port), NEW_USER, NEW_PASSWORD, NEW_DB_NAME, OLD_DB_NAME+".sql");
+    }
+
+    public void ReplicateDatabase() throws URISyntaxException {
+
+        generateDump();
+        try (Connection conn = DriverManager.getConnection(NEW_DB_URL, NEW_USER, NEW_PASSWORD);
+             Statement stmt = conn.createStatement();
+        ) {
 
             // Step 1: Drop and recreate new database
             stmt.executeUpdate("DROP DATABASE IF EXISTS " + NEW_DB_NAME);
             stmt.executeUpdate("CREATE DATABASE " + NEW_DB_NAME);
+            populateDatabase();
 
             // Step 2: Get all tables from the old database
-            stmt.executeUpdate("USE " + OLD_DB_NAME);
+            stmt.executeUpdate("USE " + NEW_DB_NAME);
             ResultSet rsTables = stmt.executeQuery("SHOW TABLES");
 
             List<String> tables = new ArrayList<>();
@@ -41,43 +82,93 @@ public class DatabaseProcessor {
                 tables.add(rsTables.getString(1));
             }
 
-            // Step 3: Switch to new database
-            stmt.executeUpdate("USE " + NEW_DB_NAME);
-
             for (String table : tables) {
-                // Get CREATE TABLE statement from old database
-                ResultSet rsCreate = stmt.executeQuery("SHOW CREATE TABLE " + OLD_DB_NAME + "." + table);
-                if (rsCreate.next()) {
-                    String createStmt = rsCreate.getString(2);
+                String checkFKQuery = "SELECT CONSTRAINT_NAME " +
+                        "FROM information_schema.TABLE_CONSTRAINTS " +
+                        "WHERE TABLE_SCHEMA = '" + NEW_DB_NAME + "' " +
+                        "AND TABLE_NAME = '" + table + "' " +
+                        "AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
 
-                    // Remove constraints and foreign keys
-                    createStmt = createStmt.replaceAll(",\\s*CONSTRAINT.*?\\)", "")
-                            .replaceAll(",\\s*FOREIGN KEY.*?\\)", "")
-                            .replaceAll("REFERENCES\\s+[^\\s]+\\s*\\([^\\)]*\\)", "")
-                            .replaceAll("NOT NULL", "")
-                            .replaceAll("DEFAULT\\s+[^,\\s)]+", "")
-                            .replaceAll("AUTO_INCREMENT", "")
-                            .replaceAll("\\s+UNSIGNED", "");
+                try (Statement readStmt = conn.createStatement();
+                     ResultSet fkRs = readStmt.executeQuery(checkFKQuery)) {
 
-                    // Add new column for row number at the end before final closing parenthesis
-                    int lastParenIndex = createStmt.lastIndexOf(")");
-                    if (lastParenIndex != -1) {
-                        createStmt = createStmt.substring(0, lastParenIndex) +
-                                ", row_num INT" + createStmt.substring(lastParenIndex);
+                    while (fkRs.next()) {
+                        String constraintName = fkRs.getString("CONSTRAINT_NAME");
+                        String removeFKQuery = "ALTER TABLE " + NEW_DB_NAME + "." + table + " DROP FOREIGN KEY " + constraintName;
+
+                        try (Statement writeStmt = conn.createStatement()) {
+                            writeStmt.executeUpdate(removeFKQuery);
+                        }
                     }
 
-                    stmt.executeUpdate(createStmt); // Create modified table in new DB
+                }
+            }
+
+            for (String table: tables){
+
+                // 3. Add row_num column if not exists
+                ResultSet colRs = stmt.executeQuery(
+                        "SHOW COLUMNS FROM " + NEW_DB_NAME + "." + table + " LIKE 'row_num'"
+                );
+                if (!colRs.next()) {
+                    String addRowNumColumn = "ALTER TABLE " + NEW_DB_NAME + "." + table + " ADD COLUMN row_num INT";
+                    System.out.println(addRowNumColumn);
+                    stmt.executeUpdate(addRowNumColumn);
                 }
 
-                // Copy data from old to new with row numbers
-                String insertStmt = "INSERT INTO " + NEW_DB_NAME + "." + table +
-                        " SELECT t.* FROM (" +
-                        " SELECT *, ROW_NUMBER() OVER () AS row_num FROM " + OLD_DB_NAME + "." + table +
-                        ") AS t";
+                Table table_obj = getTableByName(database, table);
+                assert table_obj != null;
+                List<String> columns = table_obj.getColumns().stream().map(Column::getColumnName).toList();
 
-                System.out.println(insertStmt);
-                stmt.executeUpdate(insertStmt);
+                String joinCondition = columns.stream()
+                        .map(col -> "t." + col + " = n." + col)
+                        .collect(Collectors.joining(" AND "));
+
+                String updateRowNumQuery =
+                        "WITH numbered AS (" +
+                                "  SELECT " + String.join(", ", columns) + ", ROW_NUMBER() OVER () AS rn FROM " + NEW_DB_NAME + "." + table +
+                                ") " +
+                                "UPDATE " + NEW_DB_NAME + "." + table + " t " +
+                                "JOIN numbered n ON " + joinCondition +
+                                " SET t.row_num = n.rn";
+
+                stmt.executeUpdate(updateRowNumQuery);
             }
+
+//            for (String table : tables) {
+//                // Get CREATE TABLE statement from old database
+//                ResultSet rsCreate = stmt.executeQuery("SHOW CREATE TABLE " + OLD_DB_NAME + "." + table);
+//                if (rsCreate.next()) {
+//                    String createStmt = rsCreate.getString(2);
+//
+//                    // Remove constraints and foreign keys
+//                    createStmt = createStmt.replaceAll(",\\s*CONSTRAINT.*?\\)", "")
+//                            .replaceAll(",\\s*FOREIGN KEY.*?\\)", "")
+//                            .replaceAll("REFERENCES\\s+[^\\s]+\\s*\\([^\\)]*\\)", "")
+//                            .replaceAll("NOT NULL", "")
+//                            .replaceAll("DEFAULT\\s+[^,\\s)]+", "")
+//                            .replaceAll("AUTO_INCREMENT", "")
+//                            .replaceAll("\\s+UNSIGNED", "");
+//
+//                    // Add new column for row number at the end before final closing parenthesis
+//                    int lastParenIndex = createStmt.lastIndexOf(")");
+//                    if (lastParenIndex != -1) {
+//                        createStmt = createStmt.substring(0, lastParenIndex) +
+//                                ", row_num INT" + createStmt.substring(lastParenIndex);
+//                    }
+//
+//                    stmt.executeUpdate(createStmt); // Create modified table in new DB
+//                }
+//
+//                // Copy data from old to new with row numbers
+//                String insertStmt = "INSERT INTO " + NEW_DB_NAME + "." + table +
+//                        " SELECT t.* FROM (" +
+//                        " SELECT *, ROW_NUMBER() OVER () AS row_num FROM " + OLD_DB_NAME + "." + table +
+//                        ") AS t";
+//
+//                System.out.println(insertStmt);
+//                stmt.executeUpdate(insertStmt);
+//            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,7 +176,7 @@ public class DatabaseProcessor {
     }
 
     public void processDatabase(List<String> sortedColumns) {
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        try (Connection conn = DriverManager.getConnection(NEW_DB_URL, NEW_USER, NEW_PASSWORD);
              Statement stmt = conn.createStatement()) {
 
             ReplicateDatabase();
@@ -194,6 +285,8 @@ public class DatabaseProcessor {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -237,7 +330,7 @@ public class DatabaseProcessor {
 
     private ListObjectWithDataType fetchColumnValues(String tableName, String columnName) {
         String query = "SELECT " + columnName + " FROM " + tableName + " ORDER BY row_num" ;
-        try (Connection conn = DriverManager.getConnection(DB_URL + NEW_DB_NAME, USER, PASSWORD);
+        try (Connection conn = DriverManager.getConnection(NEW_DB_URL + NEW_DB_NAME, NEW_USER, NEW_PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
