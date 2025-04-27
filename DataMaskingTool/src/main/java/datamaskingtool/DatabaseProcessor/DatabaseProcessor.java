@@ -114,7 +114,7 @@ public class DatabaseProcessor {
                 List<String> columns = table_obj.getColumns().stream().map(Column::getColumnName).toList();
 
                 String joinCondition = columns.stream()
-                        .map(col -> "t." + col + " = n." + col)
+                        .map(col -> "(t." + col + " = n." + col + " OR (t." + col + " IS NULL AND n." + col + " IS NULL))")
                         .collect(Collectors.joining(" AND "));
 
                 String updateRowNumQuery =
@@ -125,43 +125,9 @@ public class DatabaseProcessor {
                                 "JOIN numbered n ON " + joinCondition +
                                 " SET t.row_num = n.rn";
 
+                System.out.println(updateRowNumQuery);
                 stmt.executeUpdate(updateRowNumQuery);
             }
-
-//            for (String table : tables) {
-//                // Get CREATE TABLE statement from old database
-//                ResultSet rsCreate = stmt.executeQuery("SHOW CREATE TABLE " + OLD_DB_NAME + "." + table);
-//                if (rsCreate.next()) {
-//                    String createStmt = rsCreate.getString(2);
-//
-//                    // Remove constraints and foreign keys
-//                    createStmt = createStmt.replaceAll(",\\s*CONSTRAINT.*?\\)", "")
-//                            .replaceAll(",\\s*FOREIGN KEY.*?\\)", "")
-//                            .replaceAll("REFERENCES\\s+[^\\s]+\\s*\\([^\\)]*\\)", "")
-//                            .replaceAll("NOT NULL", "")
-//                            .replaceAll("DEFAULT\\s+[^,\\s)]+", "")
-//                            .replaceAll("AUTO_INCREMENT", "")
-//                            .replaceAll("\\s+UNSIGNED", "");
-//
-//                    // Add new column for row number at the end before final closing parenthesis
-//                    int lastParenIndex = createStmt.lastIndexOf(")");
-//                    if (lastParenIndex != -1) {
-//                        createStmt = createStmt.substring(0, lastParenIndex) +
-//                                ", row_num INT" + createStmt.substring(lastParenIndex);
-//                    }
-//
-//                    stmt.executeUpdate(createStmt); // Create modified table in new DB
-//                }
-//
-//                // Copy data from old to new with row numbers
-//                String insertStmt = "INSERT INTO " + NEW_DB_NAME + "." + table +
-//                        " SELECT t.* FROM (" +
-//                        " SELECT *, ROW_NUMBER() OVER () AS row_num FROM " + OLD_DB_NAME + "." + table +
-//                        ") AS t";
-//
-//                System.out.println(insertStmt);
-//                stmt.executeUpdate(insertStmt);
-//            }
 
         } catch (SQLException e) {
             e.printStackTrace();

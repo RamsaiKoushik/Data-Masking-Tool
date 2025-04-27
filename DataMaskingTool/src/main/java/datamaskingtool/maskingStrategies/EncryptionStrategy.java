@@ -73,7 +73,6 @@ public class EncryptionStrategy extends MaskingStrategy {
     @Override
     public CustomIntegerList mask(CustomIntegerList values) {
 
-        System.out.println("I'm at the encrypytion step");
         if (values == null || values.isEmpty()) {
             return values;
         }
@@ -130,11 +129,22 @@ public class EncryptionStrategy extends MaskingStrategy {
 
     private String fpeEncrypt(String value) {
         try {
-            // Ensure the string only contains characters from the charset
+            if (value.length() < 4) {
+                value = padValue(value);
+            }
             return this.c6.encrypt(value);
         } catch (Exception e) {
             throw new RuntimeException("FPE encryption failed for: " + value, e);
         }
+    }
+
+    private String padValue(String value) {
+        // Simple padding by appending 'X' till length 3
+        StringBuilder sb = new StringBuilder(value);
+        while (sb.length() < 4) {
+            sb.append('X');
+        }
+        return sb.toString();
     }
 
     private int encryptInteger(int value) {
