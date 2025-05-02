@@ -40,10 +40,10 @@ public class DataMaskingController {
             System.out.println(column);
         }
 
-        String dumpFilename = UUID.randomUUID().toString()+".sql";
+        String dumpFilename = UUID.randomUUID().toString();
         DatabaseProcessor databaseProcessor = new DatabaseProcessor(database, db_name_new);
         databaseProcessor.processDatabase(columns);
-        DatabaseDumper.dumpDatabase("localhost", "3306", database.getUsername(), database.getPassword(), db_name_new, dumpFilename);
+        DatabaseDumper.dumpDatabase("localhost", "3306", database.getUsername(), database.getPassword(), db_name_new, dumpFilename + ".sql");
 
         Map<String, String> response = new HashMap<>();
         response.put("filename", dumpFilename);
@@ -53,7 +53,7 @@ public class DataMaskingController {
 
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(@RequestParam String filename) throws IOException {
-        Path filePath = Paths.get("./").resolve(filename);
+        Path filePath = Paths.get("./").resolve(filename+".sql");
         Resource resource = new UrlResource(filePath.toUri());
 
         if (!resource.exists()) {
