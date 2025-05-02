@@ -8,7 +8,6 @@ public class DatabaseTopologicalSort {
         // Step 1: Build Graph
         Map<String, List<String>> graph = new HashMap<>();
         Map<String, Integer> inDegree = new HashMap<>();
-        List<String> primaryKeys = new ArrayList<>();
 
         // Initialize graph with empty lists and zero in-degree for all columns
         for (Table table : database.getTables()) {
@@ -23,7 +22,6 @@ public class DatabaseTopologicalSort {
 
                 if (table.getPrimaryKeys().contains(column.getColumnName())) {
                     tablePrimaryKeys.add(node);
-                    primaryKeys.add(node);
                 } else {
                     tableNonPrimaryKeys.add(node);
                 }

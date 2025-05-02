@@ -96,6 +96,27 @@ public class DatabaseProcessor {
                             writeStmt.executeUpdate(removeFKQuery);
                         }
                     }
+                }
+            }
+
+            for (String table : tables) {
+                String checkPKQuery = "SELECT CONSTRAINT_NAME " +
+                        "FROM information_schema.TABLE_CONSTRAINTS " +
+                        "WHERE TABLE_SCHEMA = '" + NEW_DB_NAME + "' " +
+                        "AND TABLE_NAME = '" + table + "' " +
+                        "AND CONSTRAINT_TYPE = 'PRIMARY KEY'";
+
+                try (Statement readStmt = conn.createStatement();
+                     ResultSet pkRs = readStmt.executeQuery(checkPKQuery)) {
+
+                    while (pkRs.next()) {
+                        String constraintName = pkRs.getString("CONSTRAINT_NAME");
+                        String removePKQuery = "ALTER TABLE " + NEW_DB_NAME + "." + table + " DROP PRIMARY KEY";
+
+                        try (Statement writeStmt = conn.createStatement()) {
+                            writeStmt.executeUpdate(removePKQuery);
+                        }
+                    }
 
                 }
             }

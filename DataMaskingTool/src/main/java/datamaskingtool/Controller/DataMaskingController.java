@@ -44,7 +44,6 @@ public class DataMaskingController {
         databaseProcessor.processDatabase(columns);
         DatabaseDumper.dumpDatabase("localhost", "3306", database.getUsername(), database.getPassword(), db_name_new, dumpFilename);
 
-//        String downloadUrl = "http://localhost:8080/download/" + dumpFilename;
         Map<String, String> response = new HashMap<>();
         response.put("filename", dumpFilename);
 
