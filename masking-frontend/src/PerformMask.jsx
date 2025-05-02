@@ -71,6 +71,8 @@ export default function PerformMask() {
     }
     if(directWriteToDB(newDbUrl, dbName, username, password, xmlContent) == false){
       alert("Did not work.")
+    }else{
+      alert("Finished masking")
     }
   };
 

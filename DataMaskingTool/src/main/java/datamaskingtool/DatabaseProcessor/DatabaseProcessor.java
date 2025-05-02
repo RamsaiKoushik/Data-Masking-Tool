@@ -75,12 +75,8 @@ public class DatabaseProcessor {
 
             // Step 2: Get all tables from the old database
             stmt.executeUpdate("USE " + NEW_DB_NAME);
-            ResultSet rsTables = stmt.executeQuery("SHOW TABLES");
 
-            List<String> tables = new ArrayList<>();
-            while (rsTables.next()) {
-                tables.add(rsTables.getString(1));
-            }
+            List<String> tables = database.getTables().stream().map(Table::getTableName).toList();
 
             for (String table : tables) {
                 String checkFKQuery = "SELECT CONSTRAINT_NAME " +
@@ -234,6 +230,13 @@ public class DatabaseProcessor {
                         updateLookupTables(isPrimaryKey, tableName, columnName, customStringList.getInternalList(), maskedStringList.getInternalList());
                         break;
                 }
+            }
+
+            List<String> tables = database.getTables().stream().map(Table::getTableName).toList();
+
+            for (String table: tables){
+                String dropQuery = "ALTER TABLE " + NEW_DB_NAME + "." + table + " DROP COLUMN row_num";
+                stmt.executeUpdate(dropQuery);
             }
 
         } catch (SQLException e) {
