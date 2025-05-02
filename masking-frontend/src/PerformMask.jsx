@@ -60,7 +60,7 @@ export default function PerformMask() {
   }
 
   
-  const handleDirectWrite = () => {
+  const handleDirectWrite = async() => {
     if(!xmlContent) {
       alert("Please upload a schema file first.");
       return;
@@ -69,8 +69,11 @@ export default function PerformMask() {
       alert("Please fill in all database connection fields.");
       return;
     }
-    if(directWriteToDB(newDbUrl, dbName, username, password, xmlContent) == false){
+    if(await directWriteToDB(newDbUrl, dbName, username, password, xmlContent) == false){
       alert("Did not work.")
+    }
+    else {
+      alert("Successfully created" +  dbName)
     }
   };
 

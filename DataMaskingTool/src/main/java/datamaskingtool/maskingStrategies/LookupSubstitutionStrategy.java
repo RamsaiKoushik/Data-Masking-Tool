@@ -5,7 +5,7 @@ import datamaskingtool.CustomClasses.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.sql.Date;
+import java.util.Date;
 
 public class LookupSubstitutionStrategy extends MaskingStrategy {
 

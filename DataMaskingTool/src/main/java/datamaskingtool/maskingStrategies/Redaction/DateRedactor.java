@@ -1,7 +1,7 @@
 package datamaskingtool.maskingStrategies.Redaction;
 
 import java.util.Calendar;
-import java.sql.Date;
+import java.util.Date;
 
 public class DateRedactor implements Redactor<Date> {
 
