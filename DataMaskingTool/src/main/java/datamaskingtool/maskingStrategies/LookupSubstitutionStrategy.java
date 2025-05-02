@@ -18,8 +18,6 @@ public class LookupSubstitutionStrategy extends MaskingStrategy {
 
     public static void updateLookupTable(String tableName, String columnName, List<?> original, List<?> updated) {
         String key = tableName + "." + columnName;
-
-        // Initialize the map for the key if not already present
         lookupTable.computeIfAbsent(key, k -> new HashMap<>());
 
         for (int i = 0; i < original.size(); i++) {

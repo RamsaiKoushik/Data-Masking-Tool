@@ -10,10 +10,8 @@ public class EncryptionStrategy extends MaskingStrategy {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Integer MOD = 10000;
 
-    // FPE parameters
-//    private final FPEString fpeEncryptor;
-    private final String fpeKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"; // 16-character key for AES-128 (adjust as needed)
-    private final String tweak = "abcdef1234567890";      // Tweak, should be consistent and secure
+    private final String fpeKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+    private final String tweak = "abcdef1234567890";
     private FF3Cipher c6;
 
     public EncryptionStrategy() {
@@ -22,23 +20,18 @@ public class EncryptionStrategy extends MaskingStrategy {
 
     private String generateFullASCIICharset() {
         StringBuilder sb = new StringBuilder();
-
-        // Lowercase letters (a-z)
         for (int i = 97; i <= 122; i++) {
             sb.append((char) i);
         }
 
-        // Uppercase letters (A-Z)
         for (int i = 65; i <= 90; i++) {
             sb.append((char) i);
         }
 
-        // Digits (0-9)
         for (int i = 48; i <= 57; i++) {
             sb.append((char) i);
         }
 
-        // Symbols (ASCII 32-47, 58-64, 91-96, 123-126)
         for (int i = 32; i <= 47; i++) {
             sb.append((char) i);
         }
@@ -148,8 +141,7 @@ public class EncryptionStrategy extends MaskingStrategy {
     }
 
     private int encryptInteger(int value) {
-        int newValue = (value % MOD * secureRandom.nextInt(1_000) % MOD) % MOD;
-        return newValue;
+        return (value % MOD * secureRandom.nextInt(1_000) % MOD) % MOD;
     }
 
     private Date encryptDate(Date date) {

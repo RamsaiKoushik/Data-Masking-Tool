@@ -68,12 +68,9 @@ public class DatabaseProcessor {
              Statement stmt = conn.createStatement();
         ) {
 
-            // Step 1: Drop and recreate new database
             stmt.executeUpdate("DROP DATABASE IF EXISTS " + NEW_DB_NAME);
             stmt.executeUpdate("CREATE DATABASE " + NEW_DB_NAME);
             populateDatabase();
-
-            // Step 2: Get all tables from the old database
             stmt.executeUpdate("USE " + NEW_DB_NAME);
 
             List<String> tables = database.getTables().stream().map(Table::getTableName).toList();
@@ -184,8 +181,8 @@ public class DatabaseProcessor {
                     case Types.SMALLINT:
                     case Types.INTEGER :
                         List<Integer> integerList = values.getList().stream()
-                                .filter(obj -> obj instanceof Number) // Ensure it's a number
-                                .map(obj -> ((Number) obj).intValue()) // Convert to Integer
+                                .filter(obj -> obj instanceof Number)
+                                .map(obj -> ((Number) obj).intValue())
                                 .toList();
                         CustomIntegerList customIntegerList = new CustomIntegerList(integerList);
                         CustomIntegerList maskedIntegerList =  strategy.mask(customIntegerList);
@@ -198,7 +195,7 @@ public class DatabaseProcessor {
                     case Types.REAL:
                         List<Float> floatList = values.getList().stream()
                                 .filter(obj -> obj instanceof Number)
-                                .map(obj -> ((Number) obj).floatValue()) // Convert to Float
+                                .map(obj -> ((Number) obj).floatValue())
                                 .toList();
                         CustomFloatList customFloatList = new CustomFloatList(floatList);
                         CustomFloatList maskedFloatList =  strategy.mask(customFloatList);
@@ -211,7 +208,7 @@ public class DatabaseProcessor {
                                 .map(obj -> {
                                     if (obj instanceof Boolean) return (Boolean) obj;
                                     if (obj instanceof String) return Boolean.parseBoolean(((String) obj).toLowerCase());
-                                    return null; // Ignore unsupported types
+                                    return null;
                                 })
                                 .filter(Objects::nonNull)
                                 .toList();
@@ -232,7 +229,7 @@ public class DatabaseProcessor {
                             return null;
                         })
                         .filter(Objects::nonNull)
-                        .map(obj -> (Date) obj) // <-- This forces type inference
+                        .map(obj -> (Date) obj)
                         .toList();
                         CustomDateList customDateList = new CustomDateList(dateList);
                         CustomDateList maskedDateList =  strategy.mask(customDateList);
@@ -244,7 +241,7 @@ public class DatabaseProcessor {
                     case Types.CHAR:
                     case Types.LONGVARCHAR:
                         List<String> stringList = values.getList().stream()
-                                .map(String::valueOf) // Converts everything to String
+                                .map(String::valueOf)
                                 .toList();
                         CustomStringList customStringList = new CustomStringList(stringList);
                         CustomStringList maskedStringList = strategy.mask(customStringList);

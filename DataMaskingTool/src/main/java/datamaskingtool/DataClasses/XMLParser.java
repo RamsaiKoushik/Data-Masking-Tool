@@ -11,17 +11,12 @@ import java.util.Set;
 public class XMLParser {
     public static Database parse_xml(String xmlContent) {
         try {
-            // Create JAXB Context
             JAXBContext jaxbContext = JAXBContext.newInstance(Database.class);
-
-            // Create Unmarshaller
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
-            // Parse XML string into Java object
             StringReader reader = new StringReader(xmlContent);
             Database database = (Database) jaxbUnmarshaller.unmarshal(reader);
 
-            // Process foreign keys and set masking strategies
             Set<String> foreignKeyColumns = new HashSet<>();
             for (Table table : database.getTables()) {
                 if (table.getForeignKeys() != null) {

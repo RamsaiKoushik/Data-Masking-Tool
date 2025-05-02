@@ -23,7 +23,6 @@ public class DateRedactor implements Redactor<Date> {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(value);
 
-        // Set all other fields to default values
         calendar.set(Calendar.MONTH, Calendar.JANUARY);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);

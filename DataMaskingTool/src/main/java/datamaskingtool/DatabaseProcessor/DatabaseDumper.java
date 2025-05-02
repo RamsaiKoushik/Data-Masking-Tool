@@ -39,7 +39,7 @@ public class DatabaseDumper {
             pb.environment().put("MYSQL_PWD", password);
 
 //            pb.redirectInput(new File(sqlFilePath));
-            pb.inheritIO(); // Optional: show MySQL output/errors in your console
+            pb.inheritIO();
             Process process = pb.start();
             int exitCode = process.waitFor();
             System.out.println(exitCode);

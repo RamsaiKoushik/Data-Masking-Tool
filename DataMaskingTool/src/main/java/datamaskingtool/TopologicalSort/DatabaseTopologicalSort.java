@@ -5,11 +5,10 @@ import datamaskingtool.DataClasses.*;
 
 public class DatabaseTopologicalSort {
     public static List<String> topologicalSort(Database database) {
-        // Step 1: Build Graph
+
         Map<String, List<String>> graph = new HashMap<>();
         Map<String, Integer> inDegree = new HashMap<>();
 
-        // Initialize graph with empty lists and zero in-degree for all columns
         for (Table table : database.getTables()) {
             String tableName = table.getTableName();
             List<String> tablePrimaryKeys = new ArrayList<>();
@@ -26,8 +25,6 @@ public class DatabaseTopologicalSort {
                     tableNonPrimaryKeys.add(node);
                 }
             }
-
-            // Add edges from primary keys to non-primary keys within the table
             for (String pk : tablePrimaryKeys) {
                 for (String nonPk : tableNonPrimaryKeys) {
                     graph.get(pk).add(nonPk);
@@ -36,7 +33,6 @@ public class DatabaseTopologicalSort {
             }
         }
 
-        // Step 2: Add edges based on foreign keys
         for (Table table : database.getTables()) {
             String fromTable = table.getTableName();
             if (table.getForeignKeys() != null) {
@@ -51,18 +47,15 @@ public class DatabaseTopologicalSort {
             }
         }
 
-        // Step 3: Perform Kahn's Algorithm (BFS-based Topological Sort)
         Queue<String> queue = new LinkedList<>();
         List<String> sortedOrder = new ArrayList<>();
 
-        // Enqueue all columns with in-degree 0
         for (String column : inDegree.keySet()) {
             if (inDegree.get(column) == 0) {
                 queue.add(column);
             }
         }
 
-        // Process queue
         while (!queue.isEmpty()) {
             String current = queue.poll();
             sortedOrder.add(current);
@@ -75,7 +68,6 @@ public class DatabaseTopologicalSort {
             }
         }
 
-        // Step 4: Check for cycles
         if (sortedOrder.size() != inDegree.size()) {
             throw new RuntimeException("Cycle detected! Topological sorting at column level is not possible.");
         }
