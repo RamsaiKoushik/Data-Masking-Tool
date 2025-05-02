@@ -74,9 +74,6 @@ export default function PerformMask() {
     }else{
       alert("Finished masking")
     }
-    else {
-      alert("Successfully created" +  dbName)
-    }
   };
 
   
