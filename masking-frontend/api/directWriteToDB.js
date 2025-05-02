@@ -21,6 +21,7 @@ export const directWriteToDB = async (newDbUrl, dbName, username, password, xmlC
         return true;
     }
     catch {
+        console.log("HI")
         return false;
     }
     

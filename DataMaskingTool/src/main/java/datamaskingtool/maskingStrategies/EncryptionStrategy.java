@@ -2,7 +2,7 @@ package datamaskingtool.maskingStrategies;
 
 import datamaskingtool.CustomClasses.*;
 import com.privacylogistics.FF3Cipher;
-import java.sql.Date;
+import java.util.Date;
 import java.security.SecureRandom;
 
 public class EncryptionStrategy extends MaskingStrategy {

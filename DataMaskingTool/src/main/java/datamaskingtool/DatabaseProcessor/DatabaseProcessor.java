@@ -3,7 +3,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import datamaskingtool.CustomClasses.*;
@@ -223,16 +223,17 @@ public class DatabaseProcessor {
                         break;
                     case Types.DATE:
                         List<Date> dateList = values.getList().stream()
-                                .map(obj -> {
-                                    try {
-                                        if (obj instanceof Date) return (Date) obj;
-                                        if (obj instanceof String) return Date.valueOf((String) obj);
-                                        if (obj instanceof Number) return new Date(((Number) obj).longValue());
-                                    } catch (Exception ignored) {}
-                                    return null;
-                                })
-                                .filter(Objects::nonNull)
-                                .toList();
+                        .map(obj -> {
+                            try {
+                                if (obj instanceof Date) return (Date) obj;
+                                if (obj instanceof String) return java.sql.Date.valueOf((String) obj);
+                                if (obj instanceof Number) return new java.sql.Date(((Number) obj).longValue());
+                            } catch (Exception ignored) {}
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .map(obj -> (Date) obj) // <-- This forces type inference
+                        .toList();
                         CustomDateList customDateList = new CustomDateList(dateList);
                         CustomDateList maskedDateList =  strategy.mask(customDateList);
 
@@ -261,7 +262,7 @@ public class DatabaseProcessor {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
